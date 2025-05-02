@@ -1,45 +1,37 @@
-html, body {
+body, html {
   height: 100%;
   margin: 0;
   padding: 0;
+  font-family: sans-serif;
+  background: #222;
   overflow: hidden;
-  font-family: 'Bitpad', monospace;
 }
-
-@font-face {
-  font-family: 'Bitpad';
-  src: url('https://fonts.cdnfonts.com/s/71938/Bitpad.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-}
-
-#matrix-bg {
+#bg-blur {
   position: fixed;
   top: 0; left: 0;
   width: 100vw;
   height: 100vh;
+  object-fit: cover;
   z-index: 0;
-  background: black;
-  display: block;
+  filter: blur(7px) brightness(0.85);
+  pointer-events: none;
 }
-
 .centered {
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
   align-items: center;
   z-index: 2;
-  background: rgba(0,0,0,0.7);
-  padding: 32px 24px;
+  background: rgba(0,0,0,0.82);
+  padding: 32px 28px;
   border-radius: 8px;
-  box-shadow: 0 0 20px #0f0b;
-  border: 2px solid #0f0;
+  box-shadow: 0 0 20px #0f0a;
+  border: 2px solid rgb(0, 60, 255);
   color: #fff;
 }
-
 button {
   padding: 12px 36px;
   border: none;
@@ -49,34 +41,180 @@ button {
   background: #222;
   color: #fff;
   transition: background 0.2s;
-  font-family: 'Bitpad', monospace;
 }
-
-button:hover:enabled {
+button:hover:enabled, .personagem-card:focus {
+  background: #0a0;
+  color: #fff;
+}
+.hidden {
+  display: none !important;
+}
+.top-right {
+  position: fixed;
+  top: 18px;
+  right: 24px;
+  z-index: 10;
+  padding: 10px 26px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  background: #222;
+  color: #fff;
+  box-shadow: 0 0 8px #0f08;
+  transition: background 0.2s;
+}
+.top-right:hover:enabled {
+  background: #0a0;
+  color: #fff;
+}
+.top-left {
+  position: fixed;
+  top: 18px;
+  left: 24px;
+  z-index: 20;
+  padding: 10px 26px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  background: #222;
+  color: #fff;
+  box-shadow: 0 0 8px #0f08;
+  transition: background 0.2s;
+}
+.top-left:hover:enabled {
   background: #0a0;
   color: #fff;
 }
 
-button:disabled {
-  opacity: 0.5;
-  cursor: default;
+.personagens-container {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 18px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.personagem-card {
+  background: rgba(25,25,25,0.88);
+  border: 2px solid #0f0;
+  border-radius: 12px;
+  padding: 12px 12px 18px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 130px;
+  box-shadow: 0 0 12px #0f0a;
+  cursor: pointer;
+  position: relative;
+  transition: transform .18s, box-shadow .18s;
+  outline: none;
+  z-index: 2;
+}
+.personagem-card.selecionado {
+  z-index: 20;
+}
+.personagem-card:hover, .personagem-card:focus, .personagem-card.selecionado {
+  transform: scale(1.05);
+  box-shadow: 0 0 32px #0f0;
+  border-color: #fff;
+}
+.personagem-card img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: #fff;
+  margin-bottom: 6px;
+  border: 2px solid #0f0;
+}
+.nome-personagem {
+  font-weight: bold;
+  color: #0f0;
+  margin-bottom: 3px;
+  font-size: 1.1em;
+}
+.personagem-card .habilidade-dialogo {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  top: 106%; /* logo abaixo do card */
+  transform: translate(-50%, 0);
+  background: rgba(20,20,20,0.97);
+  color: #fff;
+  border: 2px solid #0f0;
+  border-radius: 12px;
+  padding: 14px 18px;
+  min-width: 120px;
+  font-size: 1.05em;
+  z-index: 30;
+  text-align: center;
+  transition: opacity .14s;
+  box-shadow: 0 2px 32px #000d;
+  max-width: 90vw;
+  margin-top: 6px;
+}
+.personagem-card.selecionado .habilidade-dialogo,
+.personagem-card:hover .habilidade-dialogo,
+.personagem-card:focus .habilidade-dialogo {
+  opacity: 1;
 }
 
-.hidden {
+.personagem-card .btn-continuar {
+  margin-top: 18px;
+  z-index: 35;
+  background: #0a0;
+  border: 2px solid #fff;
+  color: #fff;
+  font-size: 1em;
+  padding: 8px 20px;
+  border-radius: 7px;
+  position: relative;
+  left: 0;
+  bottom: 0;
+  transform: none;
+  transition: background .18s;
+  display: block;
+}
+
+.personagem-card .btn-continuar:hover {
+  background: #0f0;
+  color: #000;
+}
+
+.personagem-card .btn-continuar.hidden {
   display: none !important;
 }
 
-#pergunta {
-  margin-top: 24px;
-  color: #fff;
-  font-size: 1.2em;
-  text-align: center;
-  font-family: 'Bitpad', monospace;
-}
-
-#botoes-conot-denot {
+#game .mini-personagem {
   display: flex;
-  gap: 24px;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+#game .mini-personagem img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #0f0;
+  background: #fff;
+}
+#game .mini-personagem span {
+  font-weight: bold;
+  color: #0f0;
+  font-size: 1.2em;
+}
+#game .mini-habilidade {
+  color: #fff;
+  margin-left: 10px;
+  font-size: 1em;
+  background: rgba(0,0,0,0.5);
+  border-radius: 6px;
+  padding: 2px 8px;
+  border: 1px solid #0f0;
+  margin-top: 2px;
 }
 
 #pontuacao {
@@ -84,7 +222,6 @@ button:disabled {
   font-size: 1.1em;
   margin-bottom: 12px;
   text-shadow: 0 0 5px #0f0;
-  font-family: 'Bitpad', monospace;
 }
 
 #timer-bar-container {
@@ -103,9 +240,4 @@ button:disabled {
   width: 100%;
   background: linear-gradient(90deg, #0f0 60%, #ff0 100%);
   transition: width 0.1s linear;
-}
-
-#ajuda, #regras {
-  color: #fff;
-  font-family: 'Bitpad', monospace;
 }

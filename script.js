@@ -1,4 +1,4 @@
-// Matrix background animation
+// Fundo Matrix animado
 const canvas = document.getElementById('matrix-bg');
 const ctx = canvas.getContext('2d');
 let width = window.innerWidth;
@@ -36,202 +36,130 @@ window.addEventListener('resize', () => {
   canvas.height = height;
 });
 
-// Menu logic
-const menu = document.getElementById('menu');
-const game = document.getElementById('game');
-const ajuda = document.getElementById('ajuda');
-const creditos = document.getElementById('creditos');
-const btnJogar = document.getElementById('btn-jogar');
-const btnAjuda = document.getElementById('btn-ajuda');
-const btnVoltarAjuda = document.getElementById('btn-voltar-ajuda');
+// Botões principais
 const btnCreditos = document.getElementById('btn-creditos');
 const btnVoltarCreditos = document.getElementById('btn-voltar-creditos');
-const btnConotacao = document.getElementById('btn-conotacao');
-const btnDenotacao = document.getElementById('btn-denotacao');
+const creditos = document.getElementById('creditos');
+const menu = document.getElementById('menu');
+const btnJogar = document.getElementById('btn-jogar');
+const personagem = document.getElementById('personagem');
+const btnVoltarMenu = document.getElementById('btn-voltar-menu');
+const game = document.getElementById('game');
 const btnSairJogo = document.getElementById('btn-sair-jogo');
-const perguntaDiv = document.getElementById('pergunta');
-const pontuacaoDiv = document.getElementById('pontuacao');
-const timerBar = document.getElementById('timer-bar');
+const personagemEscolhidoDiv = document.getElementById('personagem-escolhido');
 
-let estado = 'menu';
-let pontuacao = 0;
-let tempoRestante = 30;
-let tempoTotal = 30;
-let intervaloTimer = null;
-let bloqueado = false;
-
-// Lista de perguntas
-const todasPerguntas = [
-  { texto: 'A palavra "coração" em "Ele tem um coração de pedra".', resposta: 'Conotação' },
-  { texto: 'A palavra "coração" em "O coração é um órgão vital".', resposta: 'Denotação' },
-  { texto: 'O termo "estrela" em "Ela é uma estrela do futebol".', resposta: 'Conotação' },
-  { texto: 'O termo "estrela" em "Uma estrela é um corpo celeste".', resposta: 'Denotação' },
-];
-
-let perguntas = [];
-let perguntaAtual = 0;
-
-// Algoritmo para embaralhar perguntas
-function shuffle(array) {
-  let m = array.length, t, i;
-  while (m) {
-    i = Math.floor(Math.random() * m--);
-    t = array[m];
-    array[m] = array[i];
-    array[i] = t;
-  }
-  return array;
-}
-
-btnJogar.onclick = () => {
-  pontuacao = 0;
-  atualizarPontuacao();
-  perguntas = shuffle([...todasPerguntas]);
-  menu.classList.add('hidden');
-  game.classList.remove('hidden');
-  ajuda.classList.add('hidden');
-  creditos.classList.add('hidden');
-  estado = 'jogo';
-  perguntaAtual = 0;
-  mostrarPergunta();
-};
-
-btnAjuda.onclick = () => {
-  menu.classList.add('hidden');
-  ajuda.classList.remove('hidden');
-  game.classList.add('hidden');
-  creditos.classList.add('hidden');
-  estado = 'ajuda';
-};
-
-btnVoltarAjuda.onclick = () => {
-  menu.classList.remove('hidden');
-  ajuda.classList.add('hidden');
-  game.classList.add('hidden');
-  creditos.classList.add('hidden');
-  estado = 'menu';
-};
+let personagemEscolhido = null;
 
 btnCreditos.onclick = () => {
   menu.classList.add('hidden');
+  personagem.classList.add('hidden');
+  game.classList.add('hidden');
   creditos.classList.remove('hidden');
-  ajuda.classList.add('hidden');
-  game.classList.add('hidden');
-  estado = 'creditos';
 };
-
 btnVoltarCreditos.onclick = () => {
-  menu.classList.remove('hidden');
   creditos.classList.add('hidden');
-  ajuda.classList.add('hidden');
+  menu.classList.remove('hidden');
+  personagem.classList.add('hidden');
   game.classList.add('hidden');
-  estado = 'menu';
 };
 
+btnJogar.onclick = () => {
+  menu.classList.add('hidden');
+  personagem.classList.remove('hidden');
+  game.classList.add('hidden');
+  creditos.classList.add('hidden');
+};
+btnVoltarMenu.onclick = () => {
+  personagem.classList.add('hidden');
+  menu.classList.remove('hidden');
+  game.classList.add('hidden');
+  creditos.classList.add('hidden');
+  // reset seleção personagem visual (remove balão e botão continuar abertos)
+  document.querySelectorAll('.personagem-card').forEach(card => {
+    card.classList.remove('selecionado');
+    card.querySelector('.habilidade-dialogo').textContent = '';
+    card.querySelector('.habilidade-dialogo').style.opacity = 0;
+    card.querySelector('.btn-continuar').classList.add('hidden');
+  });
+};
 btnSairJogo.onclick = () => {
-  menu.classList.remove('hidden');
+  personagemEscolhido = null;
+  personagemEscolhidoDiv.innerHTML = '';
   game.classList.add('hidden');
-  ajuda.classList.add('hidden');
+  menu.classList.remove('hidden');
+  personagem.classList.add('hidden');
   creditos.classList.add('hidden');
-  estado = 'menu';
 };
 
-function mostrarPergunta() {
-  if (perguntaAtual >= perguntas.length) {
-    perguntaDiv.textContent = `Fim do jogo! Sua pontuação final foi ${pontuacao}. Clique em "Jogar" para recomeçar.`;
-    btnConotacao.disabled = true;
-    btnDenotacao.disabled = true;
-    pararTimer();
-    timerBar.style.width = "0%";
-    return;
+// Seleção de personagem: balão sobreposto e continuar
+document.querySelectorAll('.personagem-card').forEach(card => {
+  const dialogo = card.querySelector('.habilidade-dialogo');
+  const btnContinuar = card.querySelector('.btn-continuar');
+
+  function abrirDialogo() {
+    // Fecha balões e botões de todos os outros personagens antes
+    document.querySelectorAll('.personagem-card').forEach(outro => {
+      if (outro !== card) {
+        outro.classList.remove('selecionado');
+        outro.querySelector('.habilidade-dialogo').textContent = '';
+        outro.querySelector('.habilidade-dialogo').style.opacity = 0;
+        outro.querySelector('.btn-continuar').classList.add('hidden');
+      }
+    });
+    dialogo.textContent = `${card.dataset.nome}: ${card.dataset.habilidade}`;
+    dialogo.style.opacity = 1;
+    card.classList.add('selecionado');
+    btnContinuar.classList.remove('hidden');
+    // Garante que está acima de todas as opções
+    dialogo.style.zIndex = 30;
   }
-  perguntaDiv.textContent = perguntas[perguntaAtual].texto;
-  tempoRestante = tempoTotal;
-  atualizarBarra();
-  bloqueado = false;
-  btnConotacao.disabled = false;
-  btnDenotacao.disabled = false;
-  iniciarBarra();
-}
 
-function atualizarPontuacao() {
-  pontuacaoDiv.textContent = `Pontuação: ${pontuacao}`;
-}
-
-function atualizarBarra() {
-  const percent = (tempoRestante / tempoTotal) * 100;
-  timerBar.style.width = percent + "%";
-  if (percent > 60) {
-    timerBar.style.background = 'linear-gradient(90deg, #0f0 60%, #ff0 100%)';
-  } else if (percent > 30) {
-    timerBar.style.background = 'linear-gradient(90deg, #ff0 60%, #f90 100%)';
-  } else {
-    timerBar.style.background = 'linear-gradient(90deg, #f90 60%, #f00 100%)';
-  }
-}
-
-function iniciarBarra() {
-  pararTimer();
-  const step = 100; // ms
-  intervaloTimer = setInterval(() => {
-    tempoRestante -= step / 1000;
-    if (tempoRestante <= 0) {
-      tempoRestante = 0;
-      atualizarBarra();
-      pontuacao--; // Perde 1 ponto se acabar o tempo!
-      atualizarPontuacao();
-      bloquearPergunta('Tempo esgotado! -1 ponto');
-      setTimeout(proximaPergunta, 1500);
-    } else {
-      atualizarBarra();
+  function fecharDialogo() {
+    if (!card.classList.contains('selecionado')) {
+      dialogo.textContent = '';
+      dialogo.style.opacity = 0;
+      btnContinuar.classList.add('hidden');
     }
-  }, step);
-}
+  }
 
-function pararTimer() {
-  if (intervaloTimer) {
-    clearInterval(intervaloTimer);
-    intervaloTimer = null;
+  card.addEventListener('mouseenter', abrirDialogo);
+  card.addEventListener('mouseleave', fecharDialogo);
+  card.addEventListener('focus', abrirDialogo);
+  card.addEventListener('blur', fecharDialogo);
+  card.addEventListener('click', abrirDialogo);
+  card.addEventListener('keypress', (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      abrirDialogo();
+    }
+  });
+
+  btnContinuar.addEventListener('click', () => {
+    personagemEscolhido = {
+      nome: card.dataset.nome,
+      habilidade: card.dataset.habilidade,
+      img: card.querySelector('img').src
+    };
+    personagem.classList.add('hidden');
+    game.classList.remove('hidden');
+    mostrarPersonagemEscolhido();
+    // Limpa seleção visual para próxima vez
+    document.querySelectorAll('.personagem-card').forEach(card => {
+      card.classList.remove('selecionado');
+      card.querySelector('.habilidade-dialogo').textContent = '';
+      card.querySelector('.habilidade-dialogo').style.opacity = 0;
+      card.querySelector('.btn-continuar').classList.add('hidden');
+    });
+  });
+});
+
+function mostrarPersonagemEscolhido() {
+  if (personagemEscolhido) {
+    personagemEscolhidoDiv.innerHTML = `
+      <div class="mini-personagem">
+        <img src="${personagemEscolhido.img}" alt="${personagemEscolhido.nome}">
+        <span>${personagemEscolhido.nome}</span>
+        <div class="mini-habilidade">${personagemEscolhido.habilidade}</div>
+      </div>
+    `;
   }
 }
-
-function bloquearPergunta(msg) {
-  bloqueado = true;
-  btnConotacao.disabled = true;
-  btnDenotacao.disabled = true;
-  perguntaDiv.textContent = msg + ` Era: ${perguntas[perguntaAtual].resposta}`;
-  pararTimer();
-}
-
-function proximaPergunta() {
-  perguntaAtual++;
-  mostrarPergunta();
-}
-
-btnConotacao.onclick = () => {
-  if (bloqueado) return;
-  if (perguntas[perguntaAtual].resposta === 'Conotação') {
-    pontuacao++;
-    atualizarPontuacao();
-    bloquearPergunta("Correto! +1 ponto");
-  } else {
-    pontuacao--;
-    atualizarPontuacao();
-    bloquearPergunta("Errado! -1 ponto");
-  }
-  setTimeout(proximaPergunta, 1500);
-};
-
-btnDenotacao.onclick = () => {
-  if (bloqueado) return;
-  if (perguntas[perguntaAtual].resposta === 'Denotação') {
-    pontuacao++;
-    atualizarPontuacao();
-    bloquearPergunta("Correto! +1 ponto");
-  } else {
-    pontuacao--;
-    atualizarPontuacao();
-    bloquearPergunta("Errado! -1 ponto");
-  }
-  setTimeout(proximaPergunta, 1500);
-};

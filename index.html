@@ -6,14 +6,61 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <canvas id="matrix-bg"></canvas>
+  <!-- Fundo de uma sala de aula borrada -->
+  <img id="bg-blur" src="https://th.bing.com/th/id/R.b046c3cc2d661db2f3be34531362cc26?rik=j5ZtWwLO9Ym9zQ&pid=ImgRaw&r=0" alt="sala de aula borrada" />
+
+  <!-- Botão de créditos no topo direito -->
+  <button id="btn-creditos" class="top-right">Créditos</button>
+ 
+  <!-- Botão voltar ao menu no topo esquerdo -->
+ <button id="btn-voltar-menu" class="top-left">Voltar ao Menu</button>
+   
+  <!-- Menu principal centralizado -->
   <div id="menu" class="centered">
     <button id="btn-jogar">Jogar</button>
-    <button id="btn-ajuda">Instruções</button>
-    <button id="btn-creditos">Créditos</button>
   </div>
+
+  <!-- Tela de seleção de personagem -->
+  <div id="personagem" class="centered hidden">
+    <h2>Escolha seu personagem</h2>
+    <div class="personagens-container">
+      <div class="personagem-card" data-nome="Lucas" data-habilidade="Responde rapidamente às perguntas.">
+        <img src="https://cdn.pixabay.com/photo/2017/01/31/19/15/avatar-2026510_1280.png" alt="Lucas">
+        <div class="nome-personagem">Lucas</div>
+        <div class="habilidade-dialogo"></div>
+        <button class="btn-continuar hidden">Continuar</button>
+      </div>
+      <div class="personagem-card" data-nome="Ana" data-habilidade="Tem intuição afiada para conotação.">
+        <img src="https://cdn.pixabay.com/photo/2017/01/31/19/20/avatar-2026513_1280.png" alt="Ana">
+        <div class="nome-personagem">Ana</div>
+        <div class="habilidade-dialogo"></div>
+        <button class="btn-continuar hidden">Continuar</button>
+      </div>
+      <div class="personagem-card" data-nome="Rafa" data-habilidade="Nunca perde o foco durante o jogo.">
+        <img src="https://cdn.pixabay.com/photo/2017/01/31/19/20/avatar-2026521_1280.png" alt="Rafa">
+        <div class="nome-personagem">Rafa</div>
+        <div class="habilidade-dialogo"></div>
+        <button class="btn-continuar hidden">Continuar</button>
+      </div>
+      <div class="personagem-card" data-nome="Bia" data-habilidade="Especialista em denotação.">
+        <img src="https://cdn.pixabay.com/photo/2017/01/31/19/20/avatar-2026524_1280.png" alt="Bia">
+        <div class="nome-personagem">Bia</div>
+        <div class="habilidade-dialogo"></div>
+        <button class="btn-continuar hidden">Continuar</button>
+      </div>
+      <div class="personagem-card" data-nome="Dudu" data-habilidade="Sempre otimista e motiva o time.">
+        <img src="https://cdn.pixabay.com/photo/2017/01/31/19/20/avatar-2026520_1280.png" alt="Dudu">
+        <div class="nome-personagem">Dudu</div>
+        <div class="habilidade-dialogo"></div>
+        <button class="btn-continuar hidden">Continuar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tela do jogo -->
   <div id="game" class="centered hidden">
     <h2>Jogo: Conotação vs Denotação</h2>
+    <div id="personagem-escolhido"></div>
     <div id="pontuacao">Pontuação: 0</div>
     <div id="timer-bar-container">
       <div id="timer-bar"></div>
@@ -25,34 +72,148 @@
     <div id="pergunta"></div>
     <button id="btn-sair-jogo">Sair</button>
   </div>
-  <div id="ajuda" class="centered hidden">
-    <h2>Instruções</h2>
-    <div id="regras">
-      <p>
-        <b>Regras do Jogo:</b><br><br>
-        • Frases aparecerão na tela.<br>
-        • Você deve decidir se o sentido da frase é de <b>conotação</b> (sentido figurado) ou <b>denotação</b> (sentido literal).<br>
-        • Clique no botão correspondente à sua resposta.<br>
-        • Cada resposta correta vale <b>+1 ponto</b>.<br>
-        • Cada resposta errada ou se o tempo acabar vale <b>-1 ponto</b>.<br>
-        • Você tem 30 segundos para responder cada frase (a barra diminui conforme o tempo passa).<br>
-        • Clique em "Sair" para voltar ao menu principal.<br>
-      </p>
-    </div>
-    <button id="btn-voltar-ajuda">Voltar ao Menu</button>
-  </div>
+
   <div id="creditos" class="centered hidden">
     <h2>Créditos</h2>
-    <div id="creditos-content">
-      <p>
-        Jogo Criado e programado por <b>Henrique</b><br>
-        Design gráfico por <b>Agatha</b><br>
-        Ideia e ajuda de <b>Sharon</b> e <b>Sheley</b><br>
-        <b>Obrigado por jogar! <3</b><br>
-      </p>
+    <div id="creditos-content" style="text-align:left">
+      <p>• Jogo Criado e programado por Henrique<br>
+      • Design gráfico por Agatha<br>
+      • Ideia e ajuda de Sharon e Sheley</p>
     </div>
     <button id="btn-voltar-creditos">Voltar ao Menu</button>
   </div>
-  <script src="script.js"></script>
+
+  <script>
+    // Botões principais
+    const btnCreditos = document.getElementById('btn-creditos');
+    const btnVoltarCreditos = document.getElementById('btn-voltar-creditos');
+    const creditos = document.getElementById('creditos');
+    const menu = document.getElementById('menu');
+    const btnJogar = document.getElementById('btn-jogar');
+    const personagem = document.getElementById('personagem');
+    const btnVoltarMenu = document.getElementById('btn-voltar-menu');
+    const game = document.getElementById('game');
+    const btnSairJogo = document.getElementById('btn-sair-jogo');
+    const personagemEscolhidoDiv = document.getElementById('personagem-escolhido');
+
+    let personagemEscolhido = null;
+
+    btnCreditos.onclick = () => {
+      menu.classList.add('hidden');
+      personagem.classList.add('hidden');
+      game.classList.add('hidden');
+      creditos.classList.remove('hidden');
+    };
+    btnVoltarCreditos.onclick = () => {
+      creditos.classList.add('hidden');
+      menu.classList.remove('hidden');
+      personagem.classList.add('hidden');
+      game.classList.add('hidden');
+    };
+
+    btnJogar.onclick = () => {
+      menu.classList.add('hidden');
+      personagem.classList.remove('hidden');
+      game.classList.add('hidden');
+      creditos.classList.add('hidden');
+    };
+    btnVoltarMenu.onclick = () => {
+      personagem.classList.add('hidden');
+      menu.classList.remove('hidden');
+      game.classList.add('hidden');
+      creditos.classList.add('hidden');
+      // reset seleção personagem visual (remove balão e botão continuar abertos)
+      document.querySelectorAll('.personagem-card').forEach(card => {
+        card.classList.remove('selecionado');
+        card.querySelector('.habilidade-dialogo').textContent = '';
+        card.querySelector('.habilidade-dialogo').style.opacity = 0;
+        card.querySelector('.btn-continuar').classList.add('hidden');
+      });
+    };
+    btnSairJogo.onclick = () => {
+      personagemEscolhido = null;
+      personagemEscolhidoDiv.innerHTML = '';
+      game.classList.add('hidden');
+      menu.classList.remove('hidden');
+      personagem.classList.add('hidden');
+      creditos.classList.add('hidden');
+    };
+
+    // Seleção de personagem: balão sobreposto e continuar
+    document.querySelectorAll('.personagem-card').forEach(card => {
+      const dialogo = card.querySelector('.habilidade-dialogo');
+
+      function abrirDialogo() {
+        // Fecha balões de todos os outros personagens antes
+        document.querySelectorAll('.personagem-card').forEach(outro => {
+          if (outro !== card) {
+            outro.classList.remove('selecionado');
+            outro.querySelector('.habilidade-dialogo').textContent = '';
+            outro.querySelector('.habilidade-dialogo').style.opacity = 0;
+          }
+        });
+        dialogo.textContent = `${card.dataset.nome}: ${card.dataset.habilidade}`;
+        dialogo.style.opacity = 1;
+        card.classList.add('selecionado');
+        card.querySelector('.btn-continuar').classList.remove('hidden');
+        // Garante que está acima de todas as opções
+        dialogo.style.zIndex = 30;
+        
+        // Armazena o personagem selecionado
+        personagemEscolhido = {
+          nome: card.dataset.nome,
+          habilidade: card.dataset.habilidade,
+          img: card.querySelector('img').src
+        };
+      }
+
+      function fecharDialogo() {
+        if (!card.classList.contains('selecionado')) {
+          dialogo.textContent = '';
+          dialogo.style.opacity = 0;
+        }
+      }
+
+      card.addEventListener('mouseenter', abrirDialogo);
+      card.addEventListener('mouseleave', fecharDialogo);
+      card.addEventListener('focus', abrirDialogo);
+      card.addEventListener('blur', fecharDialogo);
+      card.addEventListener('click', abrirDialogo);
+      card.addEventListener('keypress', (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          abrirDialogo();
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-continuar').forEach(btnContinuar => {
+      btnContinuar.addEventListener('click', () => {
+        if (personagemEscolhido) {
+          personagem.classList.add('hidden');
+          game.classList.remove('hidden');
+          mostrarPersonagemEscolhido();
+          // Limpa seleção visual para próxima vez
+          document.querySelectorAll('.personagem-card').forEach(card => {
+            card.classList.remove('selecionado');
+            card.querySelector('.habilidade-dialogo').textContent = '';
+            card.querySelector('.habilidade-dialogo').style.opacity = 0;
+          });
+          btnContinuar.classList.add('hidden');
+        }
+      });
+    });
+
+    function mostrarPersonagemEscolhido() {
+      if (personagemEscolhido) {
+        personagemEscolhidoDiv.innerHTML = `
+          <div class="mini-personagem">
+            <img src="${personagemEscolhido.img}" alt="${personagemEscolhido.nome}">
+            <span>${personagemEscolhido.nome}</span>
+            <div class="mini-habilidade">${personagemEscolhido.habilidade}</div>
+          </div>
+        `;
+      }
+    }
+  </script>
 </body>
 </html>
