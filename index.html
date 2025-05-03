@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Jogo Matrix: Conotação vs Denotação</title>
+  <title>Trabalho de redação</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -12,8 +12,8 @@
   <!-- Botão de créditos no topo direito -->
   <button id="btn-creditos" class="top-right">Créditos</button>
  
-  <!-- Botão voltar ao menu no topo esquerdo -->
- <button id="btn-voltar-menu" class="top-left">Voltar ao Menu</button>
+  <!-- Botão dinâmico no topo esquerdo -->
+  <button id="btn-top-left" class="top-left">Leaderboard</button>
    
   <!-- Menu principal centralizado -->
   <div id="menu" class="centered">
@@ -24,33 +24,33 @@
   <div id="personagem" class="centered hidden">
     <h2>Escolha seu personagem</h2>
     <div class="personagens-container">
-      <div class="personagem-card" data-nome="Lucas" data-habilidade="Responde rapidamente às perguntas.">
+      <div class="personagem-card" data-nome="Lucas" data-habilidade="Eu consigo eliminar 2 alternativas erradas.">
         <img src="https://cdn.pixabay.com/photo/2017/01/31/19/15/avatar-2026510_1280.png" alt="Lucas">
         <div class="nome-personagem">Lucas</div>
         <div class="habilidade-dialogo"></div>
         <button class="btn-continuar hidden">Continuar</button>
       </div>
-      <div class="personagem-card" data-nome="Ana" data-habilidade="Tem intuição afiada para conotação.">
+      <div class="personagem-card" data-nome="Ana" data-habilidade="Eu tenho as dica das respostas.">
         <img src="https://cdn.pixabay.com/photo/2017/01/31/19/20/avatar-2026513_1280.png" alt="Ana">
         <div class="nome-personagem">Ana</div>
         <div class="habilidade-dialogo"></div>
         <button class="btn-continuar hidden">Continuar</button>
       </div>
-      <div class="personagem-card" data-nome="Rafa" data-habilidade="Nunca perde o foco durante o jogo.">
+      <div class="personagem-card" data-nome="Rafa" data-habilidade="Eu consigo reduzir o tempo total.">
         <img src="https://cdn.pixabay.com/photo/2017/01/31/19/20/avatar-2026521_1280.png" alt="Rafa">
         <div class="nome-personagem">Rafa</div>
         <div class="habilidade-dialogo"></div>
         <button class="btn-continuar hidden">Continuar</button>
       </div>
-      <div class="personagem-card" data-nome="Bia" data-habilidade="Especialista em denotação.">
+      <div class="personagem-card" data-nome="Bia" data-habilidade="Se eu errar a questao eu consigo responder ela novamente.">
         <img src="https://cdn.pixabay.com/photo/2017/01/31/19/20/avatar-2026524_1280.png" alt="Bia">
         <div class="nome-personagem">Bia</div>
         <div class="habilidade-dialogo"></div>
         <button class="btn-continuar hidden">Continuar</button>
       </div>
-      <div class="personagem-card" data-nome="Dudu" data-habilidade="Sempre otimista e motiva o time.">
-        <img src="https://cdn.pixabay.com/photo/2017/01/31/19/20/avatar-2026520_1280.png" alt="Dudu">
-        <div class="nome-personagem">Dudu</div>
+      <div class="personagem-card" data-nome="Tiago" data-habilidade="Eu consigo multiplicar acertos por 2 por 10 segundos.">
+        <img src="https://cdn.pixabay.com/photo/2017/01/31/19/20/avatar-2026520_1280.png" alt="Tiago">
+        <div class="nome-personagem">Tiago</div>
         <div class="habilidade-dialogo"></div>
         <button class="btn-continuar hidden">Continuar</button>
       </div>
@@ -61,16 +61,18 @@
   <div id="game" class="centered hidden">
     <h2>Jogo: Conotação vs Denotação</h2>
     <div id="personagem-escolhido"></div>
-    <div id="pontuacao">Pontuação: 0</div>
-    <div id="timer-bar-container">
-      <div id="timer-bar"></div>
+    <div id="info-jogo">
+      <div id="pontuacao">Pontuação: 0</div>
+      <div id="tempo-decorrido">Tempo: 0s</div>
     </div>
-    <div id="botoes-conot-denot">
+    <div id="botoes-respostas">
       <button id="btn-conotacao">Conotação</button>
       <button id="btn-denotacao">Denotação</button>
+      <button id="btn-metafora">Metáfora</button>
+      <button id="btn-hiperbole">Hipérbole</button>
     </div>
     <div id="pergunta"></div>
-    <button id="btn-sair-jogo">Sair</button>
+    <button id="btn-habilidade" class="hidden">Usar Habilidade</button>
   </div>
 
   <div id="creditos" class="centered hidden">
@@ -83,7 +85,54 @@
     <button id="btn-voltar-creditos">Voltar ao Menu</button>
   </div>
 
+  <!-- Tela de leaderboard -->
+  <div id="leaderboard" class="centered hidden">
+    <h2>Leaderboard</h2>
+    <div id="leaderboard-content">
+      <table>
+        <thead>
+          <tr>
+            <th>Posição</th>
+            <th>Pontuação</th>
+            <th>Tempo</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard-body">
+        </tbody>
+      </table>
+    </div>
+    <button id="btn-voltar-leaderboard">Voltar ao Menu</button>
+  </div>
+
+  <!-- Tela de resultados -->
+  <div id="resultados" class="centered hidden">
+    <h2>Resultados</h2>
+    <div id="resultados-content">
+      <p>Pontuação final: <span id="pontuacao-final">0</span></p>
+      <p>Tempo total: <span id="tempo-total">0</span> segundos</p>
+      <button id="btn-jogar-novamente">Jogar Novamente</button>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
   <script>
+    // Configuração do Firebase
+    const firebaseConfig = {
+      // Substitua com suas configurações do Firebase
+      apiKey: "AIzaSyARaZW4VeK9hQIuKh_na731tqQWk314bK0",
+      authDomain: "jogo-conotacao.firebaseapp.com",
+      databaseURL: "https://jogo-conotacao-default-rtdb.firebaseio.com",
+      projectId: "jogo-conotacao",
+      storageBucket: "jogo-conotacao.firebasestorage.app",
+      messagingSenderId: "551283073662",
+      appId: "1:551283073662:web:a8d274b8532e7e84472e2f"
+    };
+
+    // Inicializa o Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
     // Botões principais
     const btnCreditos = document.getElementById('btn-creditos');
     const btnVoltarCreditos = document.getElementById('btn-voltar-creditos');
@@ -91,86 +140,571 @@
     const menu = document.getElementById('menu');
     const btnJogar = document.getElementById('btn-jogar');
     const personagem = document.getElementById('personagem');
-    const btnVoltarMenu = document.getElementById('btn-voltar-menu');
+    const btnLeaderboard = document.getElementById('btn-top-left');
     const game = document.getElementById('game');
     const btnSairJogo = document.getElementById('btn-sair-jogo');
     const personagemEscolhidoDiv = document.getElementById('personagem-escolhido');
+    const perguntaDiv = document.getElementById('pergunta');
+    const pontuacaoDiv = document.getElementById('pontuacao');
+    const btnHabilidade = document.getElementById('btn-habilidade');
+
+    // Botões de resposta
+    const btnConotacao = document.getElementById('btn-conotacao');
+    const btnDenotacao = document.getElementById('btn-denotacao');
+    const btnMetafora = document.getElementById('btn-metafora');
+    const btnHiperbole = document.getElementById('btn-hiperbole');
 
     let personagemEscolhido = null;
+    let pontuacao = 0;
+    let perguntaAtual = null;
+    let habilidadeUsada = false;
+    let multiplicadorAtivo = false;
+    let tempoHabilidade = null;
+    let tempoInicio = null;
+    let tempoTotal = 0;
+    let timerInterval = null;
+    let usosHabilidade = 5; // Contador de usos da habilidade
 
-    btnCreditos.onclick = () => {
-      menu.classList.add('hidden');
-      personagem.classList.add('hidden');
-      game.classList.add('hidden');
-      creditos.classList.remove('hidden');
-    };
-    btnVoltarCreditos.onclick = () => {
-      creditos.classList.add('hidden');
-      menu.classList.remove('hidden');
-      personagem.classList.add('hidden');
-      game.classList.add('hidden');
-    };
+    // Array de perguntas
+    const perguntas = [
+      {
+        texto: "O tempo é um rio que corre sem parar.",
+        resposta: "metafora",
+        explicacao: "Compara o tempo com um rio, sugerindo que ambos fluem continuamente.",
+        dica: "Pense em uma comparação entre dois elementos diferentes."
+      },
+      {
+        texto: "O sol nasceu no horizonte.",
+        resposta: "denotacao",
+        explicacao: "Descreve um fato literal, sem sentido figurado.",
+        dica: "É uma descrição direta e objetiva."
+      },
+      {
+        texto: "Ela tem um coração de pedra.",
+        resposta: "metafora",
+        explicacao: "Compara a dureza do coração com a dureza da pedra.",
+        dica: "Compara características humanas com elementos da natureza."
+      },
+      {
+        texto: "Estou morrendo de fome!",
+        resposta: "hiperbole",
+        explicacao: "Exagera a sensação de fome para dar ênfase.",
+        dica: "É um exagero para expressar intensidade."
+      },
+      {
+        texto: "Aquele menino é um gato.",
+        resposta: "conotacao",
+        explicacao: "Usa 'gato' no sentido de pessoa bonita, não no sentido literal.",
+        dica: "A palavra tem um significado diferente do usual."
+      },
+      {
+        texto: "Choveu tanto que alagou a cidade inteira.",
+        resposta: "hiperbole",
+        explicacao: "Exagera a quantidade de chuva para dar ênfase.",
+        dica: "É um exagero para expressar intensidade."
+      },
+      {
+        texto: "O céu está azul hoje.",
+        resposta: "denotacao",
+        explicacao: "Descreve um fato literal, sem sentido figurado.",
+        dica: "É uma descrição direta e objetiva."
+      },
+      {
+        texto: "Ele é um leão na defesa.",
+        resposta: "metafora",
+        explicacao: "Compara a bravura na defesa com a força de um leão.",
+        dica: "Compara características humanas com animais."
+      },
+      {
+        texto: "Aquele lugar é um forno.",
+        resposta: "conotacao",
+        explicacao: "Usa 'forno' no sentido de lugar muito quente, não no sentido literal.",
+        dica: "A palavra tem um significado diferente do usual."
+      },
+      {
+        texto: "Estou há séculos esperando por você!",
+        resposta: "hiperbole",
+        explicacao: "Exagera o tempo de espera para dar ênfase.",
+        dica: "É um exagero para expressar intensidade."
+      },
+      {
+        texto: "A vida é uma caixa de surpresas.",
+        resposta: "metafora",
+        explicacao: "Compara a vida com uma caixa de surpresas, sugerindo imprevisibilidade.",
+        dica: "Compara a vida com um objeto."
+      },
+      {
+        texto: "O livro está sobre a mesa.",
+        resposta: "denotacao",
+        explicacao: "Descreve um fato literal, sem sentido figurado.",
+        dica: "É uma descrição direta e objetiva."
+      },
+      {
+        texto: "Ele é um gênio da matemática.",
+        resposta: "conotacao",
+        explicacao: "Usa 'gênio' no sentido de pessoa muito inteligente, não no sentido literal.",
+        dica: "A palavra tem um significado diferente do usual."
+      },
+      {
+        texto: "Meu coração está partido em mil pedaços.",
+        resposta: "hiperbole",
+        explicacao: "Exagera o sentimento de tristeza para dar ênfase.",
+        dica: "É um exagero para expressar intensidade."
+      },
+      {
+        texto: "O vento sussurrava nas folhas.",
+        resposta: "metafora",
+        explicacao: "Compara o som do vento com um sussurro.",
+        dica: "Compara um fenômeno natural com uma ação humana."
+      },
+      {
+        texto: "A água está gelada.",
+        resposta: "denotacao",
+        explicacao: "Descreve um fato literal, sem sentido figurado.",
+        dica: "É uma descrição direta e objetiva."
+      },
+      {
+        texto: "Ela é uma flor no jardim da vida.",
+        resposta: "metafora",
+        explicacao: "Compara a pessoa com uma flor, sugerindo beleza e delicadeza.",
+        dica: "Compara uma pessoa com um elemento da natureza."
+      },
+      {
+        texto: "Estou com um sono de urso!",
+        resposta: "hiperbole",
+        explicacao: "Exagera a sensação de sono para dar ênfase.",
+        dica: "É um exagero para expressar intensidade."
+      },
+      {
+        texto: "Aquele rapaz é um peixe.",
+        resposta: "conotacao",
+        explicacao: "Usa 'peixe' no sentido de pessoa que nada bem, não no sentido literal.",
+        dica: "A palavra tem um significado diferente do usual."
+      },
+      {
+        texto: "A lua é um farol no céu.",
+        resposta: "metafora",
+        explicacao: "Compara a lua com um farol, sugerindo que ilumina o céu.",
+        dica: "Compara um astro com um objeto que ilumina."
+      },
+      {
+        texto: "A árvore tem folhas verdes.",
+        resposta: "denotacao",
+        explicacao: "Descreve um fato literal, sem sentido figurado.",
+        dica: "É uma descrição direta e objetiva."
+      },
+      {
+        texto: "Ele tem um coração de ouro.",
+        resposta: "metafora",
+        explicacao: "Compara a bondade do coração com o valor do ouro.",
+        dica: "Compara características humanas com metais preciosos."
+      },
+      {
+        texto: "Estou com uma fome de leão!",
+        resposta: "hiperbole",
+        explicacao: "Exagera a sensação de fome para dar ênfase.",
+        dica: "É um exagero para expressar intensidade."
+      },
+      {
+        texto: "Aquele lugar é um paraíso.",
+        resposta: "conotacao",
+        explicacao: "Usa 'paraíso' no sentido de lugar muito bonito, não no sentido literal.",
+        dica: "A palavra tem um significado diferente do usual."
+      },
+      {
+        texto: "O mar está calmo hoje.",
+        resposta: "denotacao",
+        explicacao: "Descreve um fato literal, sem sentido figurado.",
+        dica: "É uma descrição direta e objetiva."
+      }
+    ];
 
-    btnJogar.onclick = () => {
-      menu.classList.add('hidden');
-      personagem.classList.remove('hidden');
-      game.classList.add('hidden');
-      creditos.classList.add('hidden');
-    };
-    btnVoltarMenu.onclick = () => {
-      personagem.classList.add('hidden');
-      menu.classList.remove('hidden');
-      game.classList.add('hidden');
-      creditos.classList.add('hidden');
-      // reset seleção personagem visual (remove balão e botão continuar abertos)
-      document.querySelectorAll('.personagem-card').forEach(card => {
-        card.classList.remove('selecionado');
-        card.querySelector('.habilidade-dialogo').textContent = '';
-        card.querySelector('.habilidade-dialogo').style.opacity = 0;
-        card.querySelector('.btn-continuar').classList.add('hidden');
+    // Função para formatar o tempo
+    function formatarTempo(segundos) {
+      const minutos = Math.floor(segundos / 60);
+      const segundosRestantes = Math.floor(segundos % 60);
+      return `${minutos}:${segundosRestantes.toString().padStart(2, '0')}`;
+    }
+
+    // Array para armazenar as melhores pontuações
+    let melhoresPontuacoes = [];
+
+    // Função para carregar o leaderboard do Firebase
+    async function carregarLeaderboard() {
+      try {
+        const snapshot = await database.ref('leaderboard').once('value');
+        melhoresPontuacoes = snapshot.val() || [];
+        atualizarTabelaLeaderboard();
+      } catch (error) {
+        console.error('Erro ao carregar leaderboard:', error);
+      }
+    }
+
+    // Função para salvar nova pontuação no Firebase
+    async function salvarPontuacao(pontuacao, tempo) {
+      try {
+        const novaPontuacao = {
+          pontuacao,
+          tempo,
+          data: new Date().toISOString()
+        };
+        
+        // Adiciona a nova pontuação ao array
+        melhoresPontuacoes.push(novaPontuacao);
+        
+        // Ordena por pontuação (maior primeiro) e tempo (menor primeiro)
+        melhoresPontuacoes.sort((a, b) => {
+          if (b.pontuacao !== a.pontuacao) {
+            return b.pontuacao - a.pontuacao;
+          }
+          return a.tempo - b.tempo;
+        });
+        
+        // Mantém apenas as 10 melhores pontuações
+        melhoresPontuacoes = melhoresPontuacoes.slice(0, 10);
+        
+        // Salva no Firebase
+        await database.ref('leaderboard').set(melhoresPontuacoes);
+        
+        // Atualiza a tabela
+        atualizarTabelaLeaderboard();
+      } catch (error) {
+        console.error('Erro ao salvar pontuação:', error);
+      }
+    }
+
+    // Função para atualizar a tabela do leaderboard
+    function atualizarTabelaLeaderboard() {
+      leaderboardBody.innerHTML = '';
+      melhoresPontuacoes.forEach((score, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${index + 1}º</td>
+          <td>${score.pontuacao}</td>
+          <td>${formatarTempo(score.tempo)}s</td>
+        `;
+        leaderboardBody.appendChild(row);
       });
-    };
-    btnSairJogo.onclick = () => {
-      personagemEscolhido = null;
-      personagemEscolhidoDiv.innerHTML = '';
+    }
+
+    // Função para mostrar resultados
+    function mostrarResultados() {
+      const resultados = document.getElementById('resultados');
+      const pontuacaoFinal = document.getElementById('pontuacao-final');
+      const tempoTotalSpan = document.getElementById('tempo-total');
+      
+      tempoTotal = (Date.now() - tempoInicio) / 1000;
+      
+      // Aplica a habilidade do Rafa (reduz o tempo em 20%)
+      if (personagemEscolhido.nome === 'Rafa') {
+        tempoTotal = tempoTotal * 0.8; // Reduz 20% do tempo
+      }
+      
+      pontuacaoFinal.textContent = pontuacao;
+      tempoTotalSpan.textContent = formatarTempo(tempoTotal);
+      
+      // Salva a pontuação no Firebase
+      salvarPontuacao(pontuacao, tempoTotal);
+      
       game.classList.add('hidden');
-      menu.classList.remove('hidden');
-      personagem.classList.add('hidden');
-      creditos.classList.add('hidden');
+      resultados.classList.remove('hidden');
+    }
+
+    // Função para atualizar o contador de usos
+    function atualizarContadorUsos() {
+      const contadorUsos = document.getElementById('contador-usos');
+      if (contadorUsos) {
+        contadorUsos.textContent = `Usos restantes: ${usosHabilidade}`;
+      }
+    }
+
+    // Função para mostrar uma nova pergunta
+    function mostrarNovaPergunta() {
+      perguntaAtual = sortearPergunta();
+      if (!perguntaAtual) {
+        mostrarResultados();
+        return;
+      }
+      
+      perguntaDiv.innerHTML = `
+        <div class="texto-pergunta">${perguntaAtual.texto}</div>
+        <div class="explicacao hidden">${perguntaAtual.explicacao}</div>
+        ${personagemEscolhido.nome === 'Ana' ? `<div class="dica hidden">Dica: ${perguntaAtual.dica}</div>` : ''}
+      `;
+      
+      // Reset botões
+      document.querySelectorAll('#botoes-respostas button').forEach(btn => {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+      });
+
+      // Reset habilidade
+      habilidadeUsada = false;
+      
+      // Mostra o botão de habilidade baseado no personagem
+      if (personagemEscolhido.nome === 'Lucas' && podeUsarHabilidade()) {
+        btnHabilidade.classList.remove('hidden');
+        btnHabilidade.textContent = 'Usar Habilidade';
+      } else if (personagemEscolhido.nome === 'Tiago' && !multiplicadorAtivo && podeUsarHabilidade()) {
+        btnHabilidade.classList.remove('hidden');
+        btnHabilidade.textContent = 'Ativar Multiplicador';
+      } else if (personagemEscolhido.nome === 'Bia' && podeUsarHabilidade()) {
+        btnHabilidade.classList.add('hidden'); // Começa escondido para a Bia
+      } else if (personagemEscolhido.nome === 'Ana' && podeUsarHabilidade()) {
+        btnHabilidade.classList.remove('hidden');
+        btnHabilidade.textContent = 'Ver Dica';
+      } else if (personagemEscolhido.nome === 'Rafa' && podeUsarHabilidade()) {
+        btnHabilidade.classList.remove('hidden');
+        btnHabilidade.textContent = 'Reduzir Tempo';
+      } else {
+        btnHabilidade.classList.add('hidden');
+      }
+    }
+
+    // Função para sortear uma nova pergunta
+    function sortearPergunta() {
+      const perguntasNaoUsadas = perguntas.filter(p => !p.usada);
+      if (perguntasNaoUsadas.length === 0) {
+        mostrarResultados();
+        return null;
+      }
+      
+      const pergunta = perguntasNaoUsadas[Math.floor(Math.random() * perguntasNaoUsadas.length)];
+      pergunta.usada = true;
+      return pergunta;
+    }
+
+    // Função para verificar se pode usar a habilidade
+    function podeUsarHabilidade() {
+      return usosHabilidade > 0;
+    }
+
+    // Função para usar a habilidade
+    function usarHabilidade() {
+      if (podeUsarHabilidade()) {
+        usosHabilidade--;
+        atualizarContadorUsos();
+        return true;
+      }
+      return false;
+    }
+
+    // Função para atualizar o tempo decorrido
+    function atualizarTempoDecorrido() {
+      const tempoDecorrido = document.getElementById('tempo-decorrido');
+      if (tempoDecorrido) {
+        const tempoAtual = (Date.now() - tempoInicio) / 1000;
+        tempoDecorrido.textContent = `Tempo: ${formatarTempo(tempoAtual)}`;
+      }
+    }
+
+    // Função para resetar o jogo
+    function resetarJogo() {
+      // Reset das perguntas
+      perguntas.forEach(p => p.usada = false);
+      
+      // Reset da pontuação e habilidades
+      pontuacao = 0;
+      multiplicadorAtivo = false;
+      usosHabilidade = 5;
+      if (tempoHabilidade) {
+        clearTimeout(tempoHabilidade);
+      }
+      if (timerInterval) {
+        clearInterval(timerInterval);
+      }
+      pontuacaoDiv.textContent = `Pontuação: ${pontuacao}`;
+      atualizarContadorUsos();
+    }
+
+    // Função para eliminar alternativas
+    function eliminarAlternativas() {
+      if (personagemEscolhido.nome === 'Lucas' && !habilidadeUsada && podeUsarHabilidade()) {
+        if (usarHabilidade()) {
+          const respostas = ['conotacao', 'denotacao', 'metafora', 'hiperbole'];
+          const respostasErradas = respostas.filter(r => r !== perguntaAtual.resposta);
+          
+          const eliminadas = [];
+          while (eliminadas.length < 2) {
+            const index = Math.floor(Math.random() * respostasErradas.length);
+            const resposta = respostasErradas[index];
+            if (!eliminadas.includes(resposta)) {
+              eliminadas.push(resposta);
+              document.getElementById(`btn-${resposta}`).style.opacity = '0.3';
+              document.getElementById(`btn-${resposta}`).disabled = true;
+            }
+          }
+          habilidadeUsada = true;
+          btnHabilidade.classList.add('hidden');
+        }
+      }
+    }
+
+    // Função para ativar o multiplicador de pontos
+    function ativarMultiplicador() {
+      if (personagemEscolhido.nome === 'Tiago' && !multiplicadorAtivo && podeUsarHabilidade()) {
+        if (usarHabilidade()) {
+          multiplicadorAtivo = true;
+          btnHabilidade.classList.add('hidden');
+          btnHabilidade.textContent = 'Multiplicador Ativo';
+          
+          // Mostra mensagem de habilidade ativada
+          const mensagemHabilidade = document.createElement('div');
+          mensagemHabilidade.id = 'mensagem-habilidade';
+          mensagemHabilidade.textContent = 'Multiplicador de Pontos Ativo!';
+          document.body.appendChild(mensagemHabilidade);
+          
+          setTimeout(() => {
+            mensagemHabilidade.remove();
+          }, 2000);
+          
+          tempoHabilidade = setTimeout(() => {
+            multiplicadorAtivo = false;
+            const mensagemFim = document.createElement('div');
+            mensagemFim.id = 'mensagem-habilidade';
+            mensagemFim.textContent = 'Multiplicador Desativado!';
+            document.body.appendChild(mensagemFim);
+            
+            setTimeout(() => {
+              mensagemFim.remove();
+            }, 2000);
+          }, 10000);
+        }
+      }
+    }
+
+    // Função para ativar a redução de tempo do Rafa
+    function ativarReducaoTempo() {
+      if (personagemEscolhido.nome === 'Rafa' && !habilidadeUsada && podeUsarHabilidade()) {
+        if (usarHabilidade()) {
+          // Reduz o tempo atual em 5%
+          const tempoAtual = (Date.now() - tempoInicio) / 1000;
+          tempoInicio = Date.now() - (tempoAtual * 0.95 * 1000);
+          
+          // Mostra mensagem de habilidade ativada
+          const mensagemHabilidade = document.createElement('div');
+          mensagemHabilidade.id = 'mensagem-habilidade';
+          mensagemHabilidade.textContent = 'Tempo Reduzido em 5%!';
+          document.body.appendChild(mensagemHabilidade);
+          
+          setTimeout(() => {
+            mensagemHabilidade.remove();
+          }, 2000);
+          
+          habilidadeUsada = true;
+          btnHabilidade.classList.add('hidden');
+        }
+      }
+    }
+
+    // Função para verificar a resposta
+    function verificarResposta(resposta) {
+      const explicacao = perguntaDiv.querySelector('.explicacao');
+      explicacao.classList.remove('hidden');
+      
+      if (resposta === perguntaAtual.resposta) {
+        // Aplica o multiplicador se estiver ativo
+        const pontosGanhos = multiplicadorAtivo ? 2 : 1;
+        pontuacao += pontosGanhos;
+        pontuacaoDiv.textContent = `Pontuação: ${pontuacao}`;
+        
+        // Mostra mensagem de pontos multiplicados
+        if (multiplicadorAtivo) {
+          const mensagemPontos = document.createElement('div');
+          mensagemPontos.id = 'mensagem-pontos';
+          mensagemPontos.textContent = `+${pontosGanhos} pontos!`;
+          document.body.appendChild(mensagemPontos);
+          
+          setTimeout(() => {
+            mensagemPontos.remove();
+          }, 1500);
+        }
+        
+        setTimeout(() => {
+          explicacao.classList.add('hidden');
+          mostrarNovaPergunta();
+        }, 2500);
+      } else {
+        // Se for a Bia, mostra o botão de habilidade
+        if (personagemEscolhido.nome === 'Bia' && !habilidadeUsada && podeUsarHabilidade()) {
+          btnHabilidade.classList.remove('hidden');
+          btnHabilidade.textContent = 'Tentar Novamente';
+        } else {
+          setTimeout(() => {
+            explicacao.classList.add('hidden');
+            mostrarNovaPergunta();
+          }, 2500);
+        }
+      }
+    }
+
+    // Event listener para os botões de resposta
+    btnConotacao.onclick = () => verificarResposta('conotacao');
+    btnDenotacao.onclick = () => verificarResposta('denotacao');
+    btnMetafora.onclick = () => verificarResposta('metafora');
+    btnHiperbole.onclick = () => verificarResposta('hiperbole');
+
+    // Event listener para o botão de habilidade
+    btnHabilidade.onclick = () => {
+      if (personagemEscolhido.nome === 'Lucas') {
+        eliminarAlternativas();
+      } else if (personagemEscolhido.nome === 'Bia' && !habilidadeUsada && podeUsarHabilidade()) {
+        if (usarHabilidade()) {
+          // Esconde a explicação e permite tentar novamente
+          const explicacao = perguntaDiv.querySelector('.explicacao');
+          explicacao.classList.add('hidden');
+          btnHabilidade.classList.add('hidden');
+          habilidadeUsada = true;
+          
+          // Reativa os botões de resposta
+          document.querySelectorAll('#botoes-respostas button').forEach(btn => {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+          });
+        }
+      } else if (personagemEscolhido.nome === 'Tiago') {
+        ativarMultiplicador();
+      } else if (personagemEscolhido.nome === 'Ana' && podeUsarHabilidade()) {
+        if (usarHabilidade()) {
+          // Mostra a dica
+          const dica = perguntaDiv.querySelector('.dica');
+          dica.classList.remove('hidden');
+          btnHabilidade.classList.add('hidden');
+          habilidadeUsada = true;
+        }
+      } else if (personagemEscolhido.nome === 'Rafa') {
+        ativarReducaoTempo();
+      }
     };
 
     // Seleção de personagem: balão sobreposto e continuar
     document.querySelectorAll('.personagem-card').forEach(card => {
       const dialogo = card.querySelector('.habilidade-dialogo');
+      const btnContinuar = card.querySelector('.btn-continuar');
 
       function abrirDialogo() {
-        // Fecha balões de todos os outros personagens antes
+        // Fecha balões e botões de todos os outros personagens antes
         document.querySelectorAll('.personagem-card').forEach(outro => {
           if (outro !== card) {
             outro.classList.remove('selecionado');
             outro.querySelector('.habilidade-dialogo').textContent = '';
             outro.querySelector('.habilidade-dialogo').style.opacity = 0;
+            outro.querySelector('.btn-continuar').classList.add('hidden');
           }
         });
         dialogo.textContent = `${card.dataset.nome}: ${card.dataset.habilidade}`;
         dialogo.style.opacity = 1;
         card.classList.add('selecionado');
-        card.querySelector('.btn-continuar').classList.remove('hidden');
+        btnContinuar.classList.remove('hidden');
         // Garante que está acima de todas as opções
         dialogo.style.zIndex = 30;
-        
-        // Armazena o personagem selecionado
-        personagemEscolhido = {
-          nome: card.dataset.nome,
-          habilidade: card.dataset.habilidade,
-          img: card.querySelector('img').src
-        };
       }
 
       function fecharDialogo() {
         if (!card.classList.contains('selecionado')) {
           dialogo.textContent = '';
           dialogo.style.opacity = 0;
+          btnContinuar.classList.add('hidden');
         }
       }
 
@@ -184,22 +718,49 @@
           abrirDialogo();
         }
       });
-    });
 
-    document.querySelectorAll('.btn-continuar').forEach(btnContinuar => {
       btnContinuar.addEventListener('click', () => {
-        if (personagemEscolhido) {
-          personagem.classList.add('hidden');
-          game.classList.remove('hidden');
-          mostrarPersonagemEscolhido();
-          // Limpa seleção visual para próxima vez
-          document.querySelectorAll('.personagem-card').forEach(card => {
-            card.classList.remove('selecionado');
-            card.querySelector('.habilidade-dialogo').textContent = '';
-            card.querySelector('.habilidade-dialogo').style.opacity = 0;
-          });
-          btnContinuar.classList.add('hidden');
-        }
+        // Define o personagem escolhido
+        personagemEscolhido = {
+          nome: card.dataset.nome,
+          habilidade: card.dataset.habilidade,
+          img: card.querySelector('img').src
+        };
+        
+        // Esconde a tela de personagem e mostra o jogo
+        personagem.classList.add('hidden');
+        game.classList.remove('hidden');
+        
+        // Inicializa o jogo
+        mostrarPersonagemEscolhido();
+        resetarJogo();
+        tempoInicio = Date.now();
+        
+        // Inicia o timer
+        timerInterval = setInterval(atualizarTempoDecorrido, 100);
+        
+        // Adiciona o contador de usos junto com o botão de habilidade
+        const containerHabilidade = document.createElement('div');
+        containerHabilidade.id = 'container-habilidade';
+        
+        const contadorUsos = document.createElement('div');
+        contadorUsos.id = 'contador-usos';
+        contadorUsos.textContent = `Usos restantes: ${usosHabilidade}`;
+        
+        containerHabilidade.appendChild(btnHabilidade);
+        containerHabilidade.appendChild(contadorUsos);
+        game.appendChild(containerHabilidade);
+        
+        // Mostra a primeira pergunta
+        mostrarNovaPergunta();
+        
+        // Limpa seleção visual para próxima vez
+        document.querySelectorAll('.personagem-card').forEach(card => {
+          card.classList.remove('selecionado');
+          card.querySelector('.habilidade-dialogo').textContent = '';
+          card.querySelector('.habilidade-dialogo').style.opacity = 0;
+          card.querySelector('.btn-continuar').classList.add('hidden');
+        });
       });
     });
 
@@ -214,6 +775,101 @@
         `;
       }
     }
+
+    const leaderboard = document.getElementById('leaderboard');
+    const btnVoltarLeaderboard = document.getElementById('btn-voltar-leaderboard');
+    const leaderboardBody = document.getElementById('leaderboard-body');
+    const btnTopLeft = document.getElementById('btn-top-left');
+
+    // Função para atualizar o texto do botão superior esquerdo
+    function atualizarBotaoTopLeft() {
+      if (!menu.classList.contains('hidden')) {
+        // Se estiver no menu principal, sempre mostra Leaderboard
+        btnTopLeft.textContent = 'Leaderboard';
+        btnTopLeft.onclick = () => {
+          menu.classList.add('hidden');
+          personagem.classList.add('hidden');
+          game.classList.add('hidden');
+          creditos.classList.add('hidden');
+          resultados.classList.add('hidden');
+          leaderboard.classList.remove('hidden');
+          atualizarLeaderboard();
+        };
+      } else if (!personagem.classList.contains('hidden')) {
+        // Se estiver na seleção de personagem, mostra Voltar ao Menu
+        btnTopLeft.textContent = 'Voltar ao Menu';
+        btnTopLeft.onclick = () => {
+          personagem.classList.add('hidden');
+          menu.classList.remove('hidden');
+          game.classList.add('hidden');
+          creditos.classList.add('hidden');
+          // reset seleção personagem visual
+          document.querySelectorAll('.personagem-card').forEach(card => {
+            card.classList.remove('selecionado');
+            card.querySelector('.habilidade-dialogo').textContent = '';
+            card.querySelector('.habilidade-dialogo').style.opacity = 0;
+            card.querySelector('.btn-continuar').classList.add('hidden');
+          });
+        };
+      } else {
+        // Em outras telas, mostra Leaderboard
+        btnTopLeft.textContent = 'Leaderboard';
+        btnTopLeft.onclick = () => {
+          menu.classList.add('hidden');
+          personagem.classList.add('hidden');
+          game.classList.add('hidden');
+          creditos.classList.add('hidden');
+          resultados.classList.add('hidden');
+          leaderboard.classList.remove('hidden');
+          atualizarLeaderboard();
+        };
+      }
+    }
+
+    // Atualizar o botão quando mudar de tela
+    btnJogar.onclick = () => {
+      menu.classList.add('hidden');
+      personagem.classList.remove('hidden');
+      game.classList.add('hidden');
+      creditos.classList.add('hidden');
+      atualizarBotaoTopLeft();
+    };
+
+    btnVoltarLeaderboard.onclick = () => {
+      leaderboard.classList.add('hidden');
+      menu.classList.remove('hidden');
+      atualizarBotaoTopLeft();
+    };
+
+    btnCreditos.onclick = () => {
+      menu.classList.add('hidden');
+      personagem.classList.add('hidden');
+      game.classList.add('hidden');
+      creditos.classList.remove('hidden');
+      atualizarBotaoTopLeft();
+    };
+
+    btnVoltarCreditos.onclick = () => {
+      creditos.classList.add('hidden');
+      menu.classList.remove('hidden');
+      atualizarBotaoTopLeft();
+    };
+
+    // Event listener para o botão jogar novamente
+    document.getElementById('btn-jogar-novamente').onclick = () => {
+      resetarJogo();
+      
+      // Volta para a tela de personagem
+      document.getElementById('resultados').classList.add('hidden');
+      personagem.classList.remove('hidden');
+      atualizarBotaoTopLeft();
+    };
+
+    // Inicializar o botão
+    atualizarBotaoTopLeft();
+
+    // Carregar o leaderboard quando a página carregar
+    carregarLeaderboard();
   </script>
 </body>
 </html>
