@@ -4,6 +4,100 @@
   <meta charset="UTF-8">
   <title>Trabalho de redação</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .leaderboard-buttons button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    #nome-input {
+      background-color: rgba(0, 0, 0, 0.9);
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    #nome-input h2 {
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    #player-name {
+      padding: 10px;
+      font-size: 18px;
+      width: 250px;
+      margin-bottom: 20px;
+      border: 2px solid #4CAF50;
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    #btn-continuar-nome {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    #btn-continuar-nome:hover {
+      background-color: #45a049;
+    }
+
+    /* Estilos para o leaderboard */
+    #leaderboard table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+    }
+
+    #leaderboard th,
+    #leaderboard td {
+      padding: 15px 30px;
+      text-align: center;
+    }
+
+    #leaderboard th {
+      background-color: rgba(76, 175, 80, 0.2);
+      color: white;
+      font-size: 18px;
+    }
+
+    #leaderboard td {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 16px;
+    }
+
+    /* Definindo larguras específicas para cada coluna */
+    #leaderboard th:nth-child(1),
+    #leaderboard td:nth-child(1) {
+      width: 15%;
+    }
+
+    #leaderboard th:nth-child(2),
+    #leaderboard td:nth-child(2) {
+      width: 35%;
+    }
+
+    #leaderboard th:nth-child(3),
+    #leaderboard td:nth-child(3) {
+      width: 25%;
+    }
+
+    #leaderboard th:nth-child(4),
+    #leaderboard td:nth-child(4) {
+      width: 25%;
+    }
+  </style>
 </head>
 <body>
   <!-- Fundo de uma sala de aula borrada -->
@@ -18,6 +112,13 @@
   <!-- Menu principal centralizado -->
   <div id="menu" class="centered">
     <button id="btn-jogar">Jogar</button>
+  </div>
+
+  <!-- Tela de input do nome -->
+  <div id="nome-input" class="centered hidden">
+    <h2>Digite seu nome</h2>
+    <input type="text" id="player-name" placeholder="Seu nome" maxlength="20">
+    <button id="btn-continuar-nome">Continuar</button>
   </div>
 
   <!-- Tela de seleção de personagem -->
@@ -93,6 +194,7 @@
         <thead>
           <tr>
             <th>Posição</th>
+            <th>Nome</th>
             <th>Pontuação</th>
             <th>Tempo</th>
           </tr>
@@ -101,7 +203,10 @@
         </tbody>
       </table>
     </div>
-    <button id="btn-voltar-leaderboard">Voltar ao Menu</button>
+    <div class="leaderboard-buttons">
+      <button id="btn-voltar-leaderboard">Voltar ao Menu</button>
+      <button id="btn-reset-leaderboard" class="reset-button">Resetar Leaderboard</button>
+    </div>
   </div>
 
   <!-- Tela de resultados -->
@@ -164,6 +269,7 @@
     let tempoTotal = 0;
     let timerInterval = null;
     let usosHabilidade = 5; // Contador de usos da habilidade
+    let playerName = '';
 
     // Array de perguntas
     const perguntas = [
@@ -344,6 +450,7 @@
     async function salvarPontuacao(pontuacao, tempo) {
       try {
         const novaPontuacao = {
+          nome: playerName,
           pontuacao,
           tempo,
           data: new Date().toISOString()
@@ -380,6 +487,7 @@
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${index + 1}º</td>
+          <td>${score.nome}</td>
           <td>${score.pontuacao}</td>
           <td>${formatarTempo(score.tempo)}s</td>
         `;
@@ -829,11 +937,34 @@
     // Atualizar o botão quando mudar de tela
     btnJogar.onclick = () => {
       menu.classList.add('hidden');
-      personagem.classList.remove('hidden');
+      document.getElementById('nome-input').classList.remove('hidden');
+      personagem.classList.add('hidden');
       game.classList.add('hidden');
       creditos.classList.add('hidden');
       atualizarBotaoTopLeft();
     };
+
+    // Event listener para o botão de continuar após digitar o nome
+    document.getElementById('btn-continuar-nome').onclick = () => {
+      const nameInput = document.getElementById('player-name');
+      playerName = nameInput.value.trim();
+      
+      if (playerName === '') {
+        alert('Por favor, digite seu nome!');
+        return;
+      }
+      
+      document.getElementById('nome-input').classList.add('hidden');
+      personagem.classList.remove('hidden');
+      atualizarBotaoTopLeft();
+    };
+
+    // Event listener para permitir continuar com Enter no input do nome
+    document.getElementById('player-name').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('btn-continuar-nome').click();
+      }
+    });
 
     btnVoltarLeaderboard.onclick = () => {
       leaderboard.classList.add('hidden');
@@ -870,6 +1001,29 @@
 
     // Carregar o leaderboard quando a página carregar
     carregarLeaderboard();
+
+    // Função para resetar o leaderboard
+    async function resetarLeaderboard() {
+      const senha = prompt('Digite a senha para resetar o leaderboard:');
+      if (senha === 'admin123') { // Senha padrão, você pode mudar
+        if (confirm('Tem certeza que deseja resetar o leaderboard? Esta ação não pode ser desfeita.')) {
+          try {
+            await database.ref('leaderboard').set([]);
+            melhoresPontuacoes = [];
+            atualizarTabelaLeaderboard();
+            alert('Leaderboard resetado com sucesso!');
+          } catch (error) {
+            console.error('Erro ao resetar leaderboard:', error);
+            alert('Erro ao resetar leaderboard. Tente novamente.');
+          }
+        }
+      } else if (senha !== null) { // Se o usuário não cancelou o prompt
+        alert('Senha incorreta!');
+      }
+    }
+
+    // Event listener para o botão de reset
+    document.getElementById('btn-reset-leaderboard').onclick = resetarLeaderboard;
   </script>
 </body>
 </html>

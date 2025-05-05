@@ -401,3 +401,23 @@ button:hover:enabled, .personagem-card:focus {
   80% { opacity: 1; transform: translate(-50%, -50%); }
   100% { opacity: 0; transform: translate(-50%, -70%); }
 }
+
+.leaderboard-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.reset-button {
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.reset-button:hover {
+  background-color: #cc0000;
+}
