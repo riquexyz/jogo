@@ -101,7 +101,7 @@
 </head>
 <body>
   <!-- Fundo de uma sala de aula borrada -->
-  <img id="bg-blur" src="https://th.bing.com/th/id/R.b046c3cc2d661db2f3be34531362cc26?rik=j5ZtWwLO9Ym9zQ&pid=ImgRaw&r=0" alt="sala de aula borrada" />
+  <img id="bg-blur" src="https://cdn.discordapp.com/attachments/1236458611514015795/1369384676392698027/Imagem_do_WhatsApp_de_2025-05-06_as_14.15.28_6544a1a8.jpg?ex=681baa5c&is=681a58dc&hm=642a805312a2f9d53c32a67bf9613b1c5015f8dd758dcd550a6183e42ac3f1b0&" alt="sala de aula borrada" />
 
   <!-- Botão de créditos no topo direito -->
   <button id="btn-creditos" class="top-right">Créditos</button>
@@ -218,6 +218,10 @@
       <button id="btn-jogar-novamente">Jogar Novamente</button>
     </div>
   </div>
+
+  <!-- Áudios para feedback sonoro -->
+  <audio id="som-correto" src="https://cdn.discordapp.com/attachments/1236458611514015795/1369397333329973248/duolingo-correct.mp3?ex=681bb626&is=681a64a6&hm=a4c33d6dff8602029875de28813099d7a1d9d6d2b717184e7ce8c725a51bef70&" preload="auto"></audio>
+  <audio id="som-erro" src="https://cdn.discordapp.com/attachments/1236458611514015795/1369397528939991141/duolingo-wrong.mp3?ex=681bb655&is=681a64d5&hm=8864fe341310bb1f483a364ccdc6fb6f30cdf135556c7a37370846588bcae931&" preload="auto"></audio>
 
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
@@ -724,7 +728,15 @@
       const explicacao = perguntaDiv.querySelector('.explicacao');
       explicacao.classList.remove('hidden');
       
+      // Elementos de áudio
+      const somCorreto = document.getElementById('som-correto');
+      const somErro = document.getElementById('som-erro');
+      
       if (resposta === perguntaAtual.resposta) {
+        // Toca som de acerto
+        somCorreto.currentTime = 0;
+        somCorreto.play();
+        
         // Incrementa o contador de acertos
         acertos++;
         
@@ -745,11 +757,21 @@
           }, 1500);
         }
         
+        // Adiciona mensagem de acerto na explicação
+        explicacao.innerHTML = `<div style="color: #4CAF50; font-weight: bold; margin-bottom: 10px;">✓ Resposta Correta!</div>${perguntaAtual.explicacao}`;
+        
         setTimeout(() => {
           explicacao.classList.add('hidden');
           mostrarNovaPergunta();
         }, 2500);
       } else {
+        // Toca som de erro
+        somErro.currentTime = 0;
+        somErro.play();
+        
+        // Adiciona mensagem de erro na explicação
+        explicacao.innerHTML = `<div style="color: #f44336; font-weight: bold; margin-bottom: 10px;">✗ Resposta Incorreta!</div>${perguntaAtual.explicacao}`;
+        
         // Se for a Segunda Chance, mostra o botão de habilidade
         if (personagemEscolhido.nome === 'Segunda Chance' && !habilidadeUsada && podeUsarHabilidade()) {
           btnHabilidade.classList.remove('hidden');
