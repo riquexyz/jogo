@@ -121,37 +121,37 @@
     <button id="btn-continuar-nome">Continuar</button>
   </div>
 
-  <!-- Tela de seleção de personagem -->
+  <!-- Tela de seleção de habilidade -->
   <div id="personagem" class="centered hidden">
-    <h2>Escolha seu personagem</h2>
+    <h2>Escolha sua habilidade</h2>
     <div class="personagens-container">
-      <div class="personagem-card" data-nome="Lucas" data-habilidade="Eu consigo eliminar 2 alternativas erradas.">
-        <img src="https://cdn.pixabay.com/photo/2017/01/31/19/15/avatar-2026510_1280.png" alt="Lucas">
-        <div class="nome-personagem">Lucas</div>
+      <div class="personagem-card" data-nome="Eliminar Alternativas" data-habilidade="Você ira poder eliminar 2 alternativas erradas.">
+        <img src="https://th.bing.com/th/id/OIP.eXWTKjmehn9Cvh-AcnHEkAHaHa?rs=1&pid=ImgDetMain" alt="Eliminar Alternativas">
+        <div class="nome-personagem">Eliminar Alternativas</div>
         <div class="habilidade-dialogo"></div>
         <button class="btn-continuar hidden">Continuar</button>
       </div>
-      <div class="personagem-card" data-nome="Ana" data-habilidade="Eu tenho as dica das respostas.">
-        <img src="https://cdn.pixabay.com/photo/2017/01/31/19/20/avatar-2026513_1280.png" alt="Ana">
-        <div class="nome-personagem">Ana</div>
+      <div class="personagem-card" data-nome="Ver Dicas" data-habilidade="Você tera as dicas das respostas.">
+        <img src="https://img.freepik.com/vetores-premium/ilustracao-de-uma-lampada-em-um-fundo-transparente_841845-148.jpg" alt="Ver Dicas">
+        <div class="nome-personagem">Ver Dicas</div>
         <div class="habilidade-dialogo"></div>
         <button class="btn-continuar hidden">Continuar</button>
       </div>
-      <div class="personagem-card" data-nome="Rafa" data-habilidade="Eu consigo reduzir o tempo total.">
-        <img src="https://cdn.pixabay.com/photo/2017/01/31/19/20/avatar-2026521_1280.png" alt="Rafa">
-        <div class="nome-personagem">Rafa</div>
+      <div class="personagem-card" data-nome="Reduzir Tempo" data-habilidade="Você ira conseguir o tempo total.">
+        <img src="https://static.vecteezy.com/ti/vetor-gratis/p3/14669389-icone-de-ampulheta-estilo-cartoon-vetor.jpg" alt="Reduzir Tempo">
+        <div class="nome-personagem">Reduzir Tempo</div>
         <div class="habilidade-dialogo"></div>
         <button class="btn-continuar hidden">Continuar</button>
       </div>
-      <div class="personagem-card" data-nome="Bia" data-habilidade="Se eu errar a questao eu consigo responder ela novamente.">
-        <img src="https://cdn.pixabay.com/photo/2017/01/31/19/20/avatar-2026524_1280.png" alt="Bia">
-        <div class="nome-personagem">Bia</div>
+      <div class="personagem-card" data-nome="Segunda Chance" data-habilidade="Se você errar a questão você poderá responder ela novamente.">
+        <img src="https://cdn.discordapp.com/attachments/1369109409132843100/1369138923405574164/Totem_of_Undying_JE2_BE2.png?ex=681ac57c&is=681973fc&hm=2a4b2848d08a7b81348b037a99c77691047537e778fef5eb41039961c81fa6a4&" alt="Segunda Chance">
+        <div class="nome-personagem">Segunda Chance</div>
         <div class="habilidade-dialogo"></div>
         <button class="btn-continuar hidden">Continuar</button>
       </div>
-      <div class="personagem-card" data-nome="Tiago" data-habilidade="Eu consigo multiplicar acertos por 2 por 10 segundos.">
-        <img src="https://cdn.pixabay.com/photo/2017/01/31/19/20/avatar-2026520_1280.png" alt="Tiago">
-        <div class="nome-personagem">Tiago</div>
+      <div class="personagem-card" data-nome="Multiplicador" data-habilidade="Você ira poder multiplicar os pontos por 2 durante 10 segundos.">
+        <img src="https://th.bing.com/th/id/OIP.FqVjgXwhzq-mSvQOIC99lAAAAA?rs=1&pid=ImgDetMain" alt="Multiplicador">
+        <div class="nome-personagem">Multiplicador</div>
         <div class="habilidade-dialogo"></div>
         <button class="btn-continuar hidden">Continuar</button>
       </div>
@@ -270,6 +270,7 @@
     let timerInterval = null;
     let usosHabilidade = 5; // Contador de usos da habilidade
     let playerName = '';
+    let acertos = 0; // Contador de acertos
 
     // Array de perguntas
     const perguntas = [
@@ -456,8 +457,18 @@
           data: new Date().toISOString()
         };
         
-        // Adiciona a nova pontuação ao array
-        melhoresPontuacoes.push(novaPontuacao);
+        // Verifica se o jogador já existe no leaderboard
+        const indexJogadorExistente = melhoresPontuacoes.findIndex(score => score.nome === playerName);
+        
+        if (indexJogadorExistente !== -1) {
+          // Se o jogador já existe, atualiza apenas se a nova pontuação for maior
+          if (pontuacao > melhoresPontuacoes[indexJogadorExistente].pontuacao) {
+            melhoresPontuacoes[indexJogadorExistente] = novaPontuacao;
+          }
+        } else {
+          // Se o jogador não existe, adiciona a nova pontuação
+          melhoresPontuacoes.push(novaPontuacao);
+        }
         
         // Ordena por pontuação (maior primeiro) e tempo (menor primeiro)
         melhoresPontuacoes.sort((a, b) => {
@@ -488,7 +499,7 @@
         row.innerHTML = `
           <td>${index + 1}º</td>
           <td>${score.nome}</td>
-          <td>${score.pontuacao}</td>
+          <td>${score.pontuacao}/25</td>
           <td>${formatarTempo(score.tempo)}s</td>
         `;
         leaderboardBody.appendChild(row);
@@ -504,18 +515,20 @@
       tempoTotal = (Date.now() - tempoInicio) / 1000;
       
       // Aplica a habilidade do Rafa (reduz o tempo em 20%)
-      if (personagemEscolhido.nome === 'Rafa') {
+      if (personagemEscolhido.nome === 'Reduzir Tempo') {
         tempoTotal = tempoTotal * 0.8; // Reduz 20% do tempo
       }
       
-      pontuacaoFinal.textContent = pontuacao;
+      pontuacaoFinal.textContent = `${acertos}/25`;
       tempoTotalSpan.textContent = formatarTempo(tempoTotal);
       
       // Salva a pontuação no Firebase
-      salvarPontuacao(pontuacao, tempoTotal);
+      salvarPontuacao(acertos, tempoTotal);
       
+      // Esconde o jogo e mostra o leaderboard
       game.classList.add('hidden');
-      resultados.classList.remove('hidden');
+      leaderboard.classList.remove('hidden');
+      atualizarTabelaLeaderboard();
     }
 
     // Função para atualizar o contador de usos
@@ -537,7 +550,7 @@
       perguntaDiv.innerHTML = `
         <div class="texto-pergunta">${perguntaAtual.texto}</div>
         <div class="explicacao hidden">${perguntaAtual.explicacao}</div>
-        ${personagemEscolhido.nome === 'Ana' ? `<div class="dica hidden">Dica: ${perguntaAtual.dica}</div>` : ''}
+        ${personagemEscolhido.nome === 'Ver Dicas' ? `<div class="dica hidden">Dica: ${perguntaAtual.dica}</div>` : ''}
       `;
       
       // Reset botões
@@ -550,18 +563,18 @@
       habilidadeUsada = false;
       
       // Mostra o botão de habilidade baseado no personagem
-      if (personagemEscolhido.nome === 'Lucas' && podeUsarHabilidade()) {
+      if (personagemEscolhido.nome === 'Eliminar Alternativas' && podeUsarHabilidade()) {
         btnHabilidade.classList.remove('hidden');
         btnHabilidade.textContent = 'Usar Habilidade';
-      } else if (personagemEscolhido.nome === 'Tiago' && !multiplicadorAtivo && podeUsarHabilidade()) {
+      } else if (personagemEscolhido.nome === 'Multiplicador' && !multiplicadorAtivo && podeUsarHabilidade()) {
         btnHabilidade.classList.remove('hidden');
         btnHabilidade.textContent = 'Ativar Multiplicador';
-      } else if (personagemEscolhido.nome === 'Bia' && podeUsarHabilidade()) {
-        btnHabilidade.classList.add('hidden'); // Começa escondido para a Bia
-      } else if (personagemEscolhido.nome === 'Ana' && podeUsarHabilidade()) {
+      } else if (personagemEscolhido.nome === 'Segunda Chance' && podeUsarHabilidade()) {
+        btnHabilidade.classList.add('hidden'); // Começa escondido para a Segunda Chance
+      } else if (personagemEscolhido.nome === 'Ver Dicas' && podeUsarHabilidade()) {
         btnHabilidade.classList.remove('hidden');
         btnHabilidade.textContent = 'Ver Dica';
-      } else if (personagemEscolhido.nome === 'Rafa' && podeUsarHabilidade()) {
+      } else if (personagemEscolhido.nome === 'Reduzir Tempo' && podeUsarHabilidade()) {
         btnHabilidade.classList.remove('hidden');
         btnHabilidade.textContent = 'Reduzir Tempo';
       } else {
@@ -613,6 +626,7 @@
       
       // Reset da pontuação e habilidades
       pontuacao = 0;
+      acertos = 0;
       multiplicadorAtivo = false;
       usosHabilidade = 5;
       if (tempoHabilidade) {
@@ -621,13 +635,13 @@
       if (timerInterval) {
         clearInterval(timerInterval);
       }
-      pontuacaoDiv.textContent = `Pontuação: ${pontuacao}`;
+      pontuacaoDiv.textContent = `Pontuação: ${acertos}`;
       atualizarContadorUsos();
     }
 
     // Função para eliminar alternativas
     function eliminarAlternativas() {
-      if (personagemEscolhido.nome === 'Lucas' && !habilidadeUsada && podeUsarHabilidade()) {
+      if (personagemEscolhido.nome === 'Eliminar Alternativas' && !habilidadeUsada && podeUsarHabilidade()) {
         if (usarHabilidade()) {
           const respostas = ['conotacao', 'denotacao', 'metafora', 'hiperbole'];
           const respostasErradas = respostas.filter(r => r !== perguntaAtual.resposta);
@@ -650,7 +664,7 @@
 
     // Função para ativar o multiplicador de pontos
     function ativarMultiplicador() {
-      if (personagemEscolhido.nome === 'Tiago' && !multiplicadorAtivo && podeUsarHabilidade()) {
+      if (personagemEscolhido.nome === 'Multiplicador' && !multiplicadorAtivo && podeUsarHabilidade()) {
         if (usarHabilidade()) {
           multiplicadorAtivo = true;
           btnHabilidade.classList.add('hidden');
@@ -683,7 +697,7 @@
 
     // Função para ativar a redução de tempo do Rafa
     function ativarReducaoTempo() {
-      if (personagemEscolhido.nome === 'Rafa' && !habilidadeUsada && podeUsarHabilidade()) {
+      if (personagemEscolhido.nome === 'Reduzir Tempo' && !habilidadeUsada && podeUsarHabilidade()) {
         if (usarHabilidade()) {
           // Reduz o tempo atual em 5%
           const tempoAtual = (Date.now() - tempoInicio) / 1000;
@@ -711,10 +725,13 @@
       explicacao.classList.remove('hidden');
       
       if (resposta === perguntaAtual.resposta) {
+        // Incrementa o contador de acertos
+        acertos++;
+        
         // Aplica o multiplicador se estiver ativo
         const pontosGanhos = multiplicadorAtivo ? 2 : 1;
         pontuacao += pontosGanhos;
-        pontuacaoDiv.textContent = `Pontuação: ${pontuacao}`;
+        pontuacaoDiv.textContent = `Pontuação: ${acertos}`;
         
         // Mostra mensagem de pontos multiplicados
         if (multiplicadorAtivo) {
@@ -733,8 +750,8 @@
           mostrarNovaPergunta();
         }, 2500);
       } else {
-        // Se for a Bia, mostra o botão de habilidade
-        if (personagemEscolhido.nome === 'Bia' && !habilidadeUsada && podeUsarHabilidade()) {
+        // Se for a Segunda Chance, mostra o botão de habilidade
+        if (personagemEscolhido.nome === 'Segunda Chance' && !habilidadeUsada && podeUsarHabilidade()) {
           btnHabilidade.classList.remove('hidden');
           btnHabilidade.textContent = 'Tentar Novamente';
         } else {
@@ -754,9 +771,9 @@
 
     // Event listener para o botão de habilidade
     btnHabilidade.onclick = () => {
-      if (personagemEscolhido.nome === 'Lucas') {
+      if (personagemEscolhido.nome === 'Eliminar Alternativas') {
         eliminarAlternativas();
-      } else if (personagemEscolhido.nome === 'Bia' && !habilidadeUsada && podeUsarHabilidade()) {
+      } else if (personagemEscolhido.nome === 'Segunda Chance' && !habilidadeUsada && podeUsarHabilidade()) {
         if (usarHabilidade()) {
           // Esconde a explicação e permite tentar novamente
           const explicacao = perguntaDiv.querySelector('.explicacao');
@@ -770,9 +787,9 @@
             btn.style.opacity = '1';
           });
         }
-      } else if (personagemEscolhido.nome === 'Tiago') {
+      } else if (personagemEscolhido.nome === 'Multiplicador') {
         ativarMultiplicador();
-      } else if (personagemEscolhido.nome === 'Ana' && podeUsarHabilidade()) {
+      } else if (personagemEscolhido.nome === 'Ver Dicas' && podeUsarHabilidade()) {
         if (usarHabilidade()) {
           // Mostra a dica
           const dica = perguntaDiv.querySelector('.dica');
@@ -780,12 +797,12 @@
           btnHabilidade.classList.add('hidden');
           habilidadeUsada = true;
         }
-      } else if (personagemEscolhido.nome === 'Rafa') {
+      } else if (personagemEscolhido.nome === 'Reduzir Tempo') {
         ativarReducaoTempo();
       }
     };
 
-    // Seleção de personagem: balão sobreposto e continuar
+    // Seleção de habilidade: balão sobreposto e continuar
     document.querySelectorAll('.personagem-card').forEach(card => {
       const dialogo = card.querySelector('.habilidade-dialogo');
       const btnContinuar = card.querySelector('.btn-continuar');
@@ -800,7 +817,7 @@
             outro.querySelector('.btn-continuar').classList.add('hidden');
           }
         });
-        dialogo.textContent = `${card.dataset.nome}: ${card.dataset.habilidade}`;
+        dialogo.textContent = card.dataset.habilidade;
         dialogo.style.opacity = 1;
         card.classList.add('selecionado');
         btnContinuar.classList.remove('hidden');
@@ -828,14 +845,14 @@
       });
 
       btnContinuar.addEventListener('click', () => {
-        // Define o personagem escolhido
+        // Define a habilidade escolhida
         personagemEscolhido = {
           nome: card.dataset.nome,
           habilidade: card.dataset.habilidade,
           img: card.querySelector('img').src
         };
         
-        // Esconde a tela de personagem e mostra o jogo
+        // Esconde a tela de habilidade e mostra o jogo
         personagem.classList.add('hidden');
         game.classList.remove('hidden');
         
@@ -904,14 +921,14 @@
           atualizarLeaderboard();
         };
       } else if (!personagem.classList.contains('hidden')) {
-        // Se estiver na seleção de personagem, mostra Voltar ao Menu
+        // Se estiver na seleção de habilidade, mostra Voltar ao Menu
         btnTopLeft.textContent = 'Voltar ao Menu';
         btnTopLeft.onclick = () => {
           personagem.classList.add('hidden');
           menu.classList.remove('hidden');
           game.classList.add('hidden');
           creditos.classList.add('hidden');
-          // reset seleção personagem visual
+          // reset seleção habilidade visual
           document.querySelectorAll('.personagem-card').forEach(card => {
             card.classList.remove('selecionado');
             card.querySelector('.habilidade-dialogo').textContent = '';
@@ -990,7 +1007,7 @@
     document.getElementById('btn-jogar-novamente').onclick = () => {
       resetarJogo();
       
-      // Volta para a tela de personagem
+      // Volta para a tela de habilidade
       document.getElementById('resultados').classList.add('hidden');
       personagem.classList.remove('hidden');
       atualizarBotaoTopLeft();
