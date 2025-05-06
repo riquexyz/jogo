@@ -97,11 +97,76 @@
     #leaderboard td:nth-child(4) {
       width: 25%;
     }
+
+    #jumpscare-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.1s;
+    }
+
+    #jumpscare-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #jumpscare-video {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    #btn-sair-fullscreen {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      z-index: 1000;
+      display: none;
+    }
+
+    #btn-sair-fullscreen:hover {
+      background-color: #45a049;
+    }
+
+    #bg-blur, #bg-sala {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      transition: opacity 0.5s ease;
+    }
+    .hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
   </style>
 </head>
 <body>
-  <!-- Fundo de uma sala de aula borrada -->
-  <img id="bg-blur" src="https://cdn.discordapp.com/attachments/1236458611514015795/1369384676392698027/Imagem_do_WhatsApp_de_2025-05-06_as_14.15.28_6544a1a8.jpg?ex=681baa5c&is=681a58dc&hm=642a805312a2f9d53c32a67bf9613b1c5015f8dd758dcd550a6183e42ac3f1b0&" alt="sala de aula borrada" />
+  <!-- Fundo de um corredor borrado -->
+  <img id="bg-blur" class="visible" src="https://cdn.discordapp.com/attachments/1236458611514015795/1369384676392698027/Imagem_do_WhatsApp_de_2025-05-06_as_14.15.28_6544a1a8.jpg?ex=681baa5c&is=681a58dc&hm=642a805312a2f9d53c32a67bf9613b1c5015f8dd758dcd550a6183e42ac3f1b0&" alt="corredor borrado" />
+  <!-- Fundo da sala de aula para seleção de personagem -->
+  <img id="bg-sala" class="hidden" src="https://th.bing.com/th/id/R.b046c3cc2d661db2f3be34531362cc26?rik=j5ZtWwLO9Ym9zQ&pid=ImgRaw&r=0" alt="sala de aula" />
 
   <!-- Botão de créditos no topo direito -->
   <button id="btn-creditos" class="top-right">Créditos</button>
@@ -181,7 +246,7 @@
     <div id="creditos-content" style="text-align:left">
       <p>• Jogo Criado e programado por Henrique<br>
       • Design gráfico por Agatha<br>
-      • Ideia e ajuda de Sharon e Sheley</p>
+      • Ideia e ajuda da Sheley</p>
     </div>
     <button id="btn-voltar-creditos">Voltar ao Menu</button>
   </div>
@@ -222,6 +287,14 @@
   <!-- Áudios para feedback sonoro -->
   <audio id="som-correto" src="https://cdn.discordapp.com/attachments/1236458611514015795/1369397333329973248/duolingo-correct.mp3?ex=681bb626&is=681a64a6&hm=a4c33d6dff8602029875de28813099d7a1d9d6d2b717184e7ce8c725a51bef70&" preload="auto"></audio>
   <audio id="som-erro" src="https://cdn.discordapp.com/attachments/1236458611514015795/1369397528939991141/duolingo-wrong.mp3?ex=681bb655&is=681a64d5&hm=8864fe341310bb1f483a364ccdc6fb6f30cdf135556c7a37370846588bcae931&" preload="auto"></audio>
+  <audio id="som-jumpscare" src="https://cdn.discordapp.com/attachments/1236458611514015795/1369397528939991141/duolingo-wrong.mp3?ex=681bb655&is=681a64d5&hm=8864fe341310bb1f483a364ccdc6fb6f30cdf135556c7a37370846588bcae931&" preload="auto"></audio>
+
+  <!-- Jumpscare overlay -->
+  <div id="jumpscare-overlay" class="hidden">
+    <video id="jumpscare-video" width="100%" height="100%" autoplay>
+      <source src="https://cdn.discordapp.com/attachments/1236458611514015795/1369416174474887279/video.mp4?ex=681bc7b2&is=681a7632&hm=a0836a9766706f39197f5de1b3ae70dd36205a38b5a0130c2d228026a6ddc836&" type="video/mp4">
+    </video>
+  </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
@@ -275,6 +348,10 @@
     let usosHabilidade = 5; // Contador de usos da habilidade
     let playerName = '';
     let acertos = 0; // Contador de acertos
+    let errosConsecutivos = 0; // Contador de erros consecutivos
+    const CHANCE_BASE_JUMPSCARE = 0.01; // 1% de chance base
+    const AUMENTO_CHANCE_POR_ERRO = 0.05; // Aumenta 5% por erro
+    let jumpscareJaApareceu = false; // Flag para controlar se o jumpscare já apareceu
 
     // Array de perguntas
     const perguntas = [
@@ -633,6 +710,8 @@
       acertos = 0;
       multiplicadorAtivo = false;
       usosHabilidade = 5;
+      errosConsecutivos = 0;
+      jumpscareJaApareceu = false; // Reseta o flag do jumpscare
       if (tempoHabilidade) {
         clearTimeout(tempoHabilidade);
       }
@@ -703,14 +782,14 @@
     function ativarReducaoTempo() {
       if (personagemEscolhido.nome === 'Reduzir Tempo' && !habilidadeUsada && podeUsarHabilidade()) {
         if (usarHabilidade()) {
-          // Reduz o tempo atual em 5%
+          // Reduz exatamente 20 segundos do tempo atual
           const tempoAtual = (Date.now() - tempoInicio) / 1000;
-          tempoInicio = Date.now() - (tempoAtual * 0.95 * 1000);
+          tempoInicio = Date.now() - ((tempoAtual - 20) * 1000);
           
           // Mostra mensagem de habilidade ativada
           const mensagemHabilidade = document.createElement('div');
           mensagemHabilidade.id = 'mensagem-habilidade';
-          mensagemHabilidade.textContent = 'Tempo Reduzido em 5%!';
+          mensagemHabilidade.textContent = 'Tempo Reduzido em 20 segundos!';
           document.body.appendChild(mensagemHabilidade);
           
           setTimeout(() => {
@@ -721,6 +800,25 @@
           btnHabilidade.classList.add('hidden');
         }
       }
+    }
+
+    // Função para mostrar o jumpscare
+    function mostrarJumpscare() {
+      const overlay = document.getElementById('jumpscare-overlay');
+      const video = document.getElementById('jumpscare-video');
+      const somJumpscare = document.getElementById('som-jumpscare');
+      
+      overlay.classList.remove('hidden');
+      video.currentTime = 0;
+      video.play();
+      somJumpscare.currentTime = 0;
+      somJumpscare.play();
+      
+      // Esconde o jumpscare após 15 segundos
+      setTimeout(() => {
+        overlay.classList.add('hidden');
+        video.pause();
+      }, 2000);
     }
 
     // Função para verificar a resposta
@@ -736,6 +834,9 @@
         // Toca som de acerto
         somCorreto.currentTime = 0;
         somCorreto.play();
+        
+        // Reseta o contador de erros consecutivos
+        errosConsecutivos = 0;
         
         // Incrementa o contador de acertos
         acertos++;
@@ -768,6 +869,20 @@
         // Toca som de erro
         somErro.currentTime = 0;
         somErro.play();
+        
+        // Incrementa o contador de erros consecutivos
+        errosConsecutivos++;
+        
+        // Calcula a chance do jumpscare apenas se ainda não apareceu
+        if (!jumpscareJaApareceu) {
+          const chanceJumpscare = CHANCE_BASE_JUMPSCARE + (errosConsecutivos * AUMENTO_CHANCE_POR_ERRO);
+          
+          // Verifica se o jumpscare deve aparecer
+          if (Math.random() < chanceJumpscare) {
+            mostrarJumpscare();
+            jumpscareJaApareceu = true; // Marca que o jumpscare já apareceu
+          }
+        }
         
         // Adiciona mensagem de erro na explicação
         explicacao.innerHTML = `<div style="color: #f44336; font-weight: bold; margin-bottom: 10px;">✗ Resposta Incorreta!</div>${perguntaAtual.explicacao}`;
@@ -957,6 +1072,7 @@
             card.querySelector('.habilidade-dialogo').style.opacity = 0;
             card.querySelector('.btn-continuar').classList.add('hidden');
           });
+          mostrarCorredorEsconderSala();
         };
       } else {
         // Em outras telas, mostra Leaderboard
@@ -973,13 +1089,38 @@
       }
     }
 
+    // Função para mostrar corredor e esconder sala
+    function mostrarCorredorEsconderSala() {
+      document.getElementById('bg-blur').classList.remove('hidden');
+      document.getElementById('bg-blur').classList.add('visible');
+      document.getElementById('bg-sala').classList.remove('visible');
+      document.getElementById('bg-sala').classList.add('hidden');
+    }
+    // Função para mostrar sala e esconder corredor
+    function mostrarSalaEsconderCorredor() {
+      document.getElementById('bg-blur').classList.remove('visible');
+      document.getElementById('bg-blur').classList.add('hidden');
+      document.getElementById('bg-sala').classList.remove('hidden');
+      document.getElementById('bg-sala').classList.add('visible');
+    }
+
     // Atualizar o botão quando mudar de tela
     btnJogar.onclick = () => {
+      // Solicita tela cheia
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      } else if (document.documentElement.webkitRequestFullscreen) { // Safari
+        document.documentElement.webkitRequestFullscreen();
+      } else if (document.documentElement.msRequestFullscreen) { // IE11
+        document.documentElement.msRequestFullscreen();
+      }
+
       menu.classList.add('hidden');
       document.getElementById('nome-input').classList.remove('hidden');
       personagem.classList.add('hidden');
       game.classList.add('hidden');
       creditos.classList.add('hidden');
+      mostrarCorredorEsconderSala();
       atualizarBotaoTopLeft();
     };
 
@@ -995,6 +1136,7 @@
       
       document.getElementById('nome-input').classList.add('hidden');
       personagem.classList.remove('hidden');
+      mostrarSalaEsconderCorredor();
       atualizarBotaoTopLeft();
     };
 
@@ -1008,6 +1150,7 @@
     btnVoltarLeaderboard.onclick = () => {
       leaderboard.classList.add('hidden');
       menu.classList.remove('hidden');
+      mostrarCorredorEsconderSala();
       atualizarBotaoTopLeft();
     };
 
@@ -1016,22 +1159,27 @@
       personagem.classList.add('hidden');
       game.classList.add('hidden');
       creditos.classList.remove('hidden');
+      mostrarCorredorEsconderSala();
       atualizarBotaoTopLeft();
     };
 
     btnVoltarCreditos.onclick = () => {
       creditos.classList.add('hidden');
       menu.classList.remove('hidden');
+      mostrarCorredorEsconderSala();
       atualizarBotaoTopLeft();
     };
 
     // Event listener para o botão jogar novamente
     document.getElementById('btn-jogar-novamente').onclick = () => {
       resetarJogo();
-      
-      // Volta para a tela de habilidade
       document.getElementById('resultados').classList.add('hidden');
       personagem.classList.remove('hidden');
+      // Troca o fundo: esconde corredor, mostra sala
+      document.getElementById('bg-blur').classList.remove('visible');
+      document.getElementById('bg-blur').classList.add('hidden');
+      document.getElementById('bg-sala').classList.remove('hidden');
+      document.getElementById('bg-sala').classList.add('visible');
       atualizarBotaoTopLeft();
     };
 
