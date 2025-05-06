@@ -163,3 +163,23 @@ function mostrarPersonagemEscolhido() {
     `;
   }
 }
+
+let jumpscareDesativado = false;
+
+document.getElementById('btn-jumpscare-secret').onclick = function() {
+  const senha = prompt('Digite a senha:');
+  if (senha === '4002') {
+    jumpscareDesativado = true;
+    alert('Jumpscare desativado!');
+  } else if (senha !== null) {
+    alert('Senha incorreta!');
+  }
+};
+
+if (!jumpscareJaApareceu && !jumpscareDesativado) {
+  const chanceJumpscare = CHANCE_BASE_JUMPSCARE + (errosConsecutivos * AUMENTO_CHANCE_POR_ERRO);
+  if (Math.random() < chanceJumpscare) {
+    mostrarJumpscare();
+    jumpscareJaApareceu = true;
+  }
+}
