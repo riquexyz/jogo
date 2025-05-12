@@ -21,11 +21,23 @@
       padding: 30px;
       border-radius: 10px;
       text-align: center;
+      border: 2px solid #4CAF50;
+      background-image: url('https://i.imgur.com/B2p5ymB.jpeg');
+      background-size: cover;
+      background-position: center;
+      width: 400px;
+      height: 300px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
     #nome-input h2 {
       color: white;
       margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
 
     #player-name {
@@ -152,6 +164,11 @@
       z-index: 0;
       transition: opacity 0.5s ease;
     }
+
+    #bg-blur {
+      filter: none !important;
+    }
+
     .hidden {
       opacity: 0;
       pointer-events: none;
@@ -173,13 +190,26 @@
       background: transparent;
       cursor: pointer;
     }
+
+    #bg-nome {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      display: none;
+    }
   </style>
 </head>
 <body>
   <!-- Fundo de um corredor borrado -->
-  <img id="bg-blur" class="visible" src="https://cdn.discordapp.com/attachments/1236458611514015795/1369384676392698027/Imagem_do_WhatsApp_de_2025-05-06_as_14.15.28_6544a1a8.jpg?ex=681baa5c&is=681a58dc&hm=642a805312a2f9d53c32a67bf9613b1c5015f8dd758dcd550a6183e42ac3f1b0&" alt="corredor borrado" />
+  <img id="bg-blur" class="visible" src="https://i.imgur.com/2T19ELL.jpeg" alt="corredor" />
   <!-- Fundo da sala de aula para seleção de personagem -->
-  <img id="bg-sala" class="hidden" src="https://th.bing.com/th/id/R.b046c3cc2d661db2f3be34531362cc26?rik=j5ZtWwLO9Ym9zQ&pid=ImgRaw&r=0" alt="sala de aula" />
+  <img id="bg-sala" class="hidden" src="https://imgur.com/sJTymMo.jpeg" alt="sala de aula" />
+  <!-- Fundo para tela de nome -->
+  <img id="bg-nome" src="https://i.imgur.com/QKyIBpn.jpeg" alt="fundo nome" />
 
   <!-- Botão de créditos no topo direito -->
   <button id="btn-creditos" class="top-right">Créditos</button>
@@ -222,7 +252,7 @@
         <button class="btn-continuar hidden">Continuar</button>
       </div>
       <div class="personagem-card" data-nome="Segunda Chance" data-habilidade="Se você errar a questão você poderá responder ela novamente.">
-        <img src="https://cdn.discordapp.com/attachments/1369109409132843100/1369138923405574164/Totem_of_Undying_JE2_BE2.png?ex=681ac57c&is=681973fc&hm=2a4b2848d08a7b81348b037a99c77691047537e778fef5eb41039961c81fa6a4&" alt="Segunda Chance">
+        <img src="https://imgur.com/4aqTYQD.jpeg" alt="Segunda Chance">
         <div class="nome-personagem">Segunda Chance</div>
         <div class="habilidade-dialogo"></div>
         <button class="btn-continuar hidden">Continuar</button>
@@ -298,14 +328,14 @@
   </div>
 
   <!-- Áudios para feedback sonoro -->
-  <audio id="som-correto" src="https://cdn.discordapp.com/attachments/1236458611514015795/1369397333329973248/duolingo-correct.mp3?ex=681bb626&is=681a64a6&hm=a4c33d6dff8602029875de28813099d7a1d9d6d2b717184e7ce8c725a51bef70&" preload="auto"></audio>
-  <audio id="som-erro" src="https://cdn.discordapp.com/attachments/1236458611514015795/1369397528939991141/duolingo-wrong.mp3?ex=681bb655&is=681a64d5&hm=8864fe341310bb1f483a364ccdc6fb6f30cdf135556c7a37370846588bcae931&" preload="auto"></audio>
-  <audio id="som-jumpscare" src="https://cdn.discordapp.com/attachments/1236458611514015795/1369397528939991141/duolingo-wrong.mp3?ex=681bb655&is=681a64d5&hm=8864fe341310bb1f483a364ccdc6fb6f30cdf135556c7a37370846588bcae931&" preload="auto"></audio>
+  <audio id="som-correto" src="https://www.dropbox.com/scl/fi/wnj3h0x1sld5jnk5g2j8y/duolingo-correct-1.mp3?rlkey=3rejj4g3kjcmg8yiv6gikjs6r&raw=1" preload="auto"></audio>
+  <audio id="som-erro" src="https://www.dropbox.com/scl/fi/6p13y67az9n3oldz5nq1b/duolingo-wrong-2.mp3?rlkey=iyie2i7681z6vq877ykhwjgkt&raw=1" preload="auto"></audio>
+  <audio id="som-jumpscare" src="https://www.dropbox.com/scl/fi/6p13y67az9n3oldz5nq1b/duolingo-wrong-2.mp3?rlkey=iyie2i7681z6vq877ykhwjgkt&raw=1" preload="auto"></audio>
 
   <!-- Jumpscare overlay -->
   <div id="jumpscare-overlay" class="hidden">
     <video id="jumpscare-video" width="100%" height="100%" autoplay>
-      <source src="https://cdn.discordapp.com/attachments/1236458611514015795/1369416174474887279/video.mp4?ex=681bc7b2&is=681a7632&hm=a0836a9766706f39197f5de1b3ae70dd36205a38b5a0130c2d228026a6ddc836&" type="video/mp4">
+      <source src="https://i.imgur.com/5ABP6p9.mp4" type="video/mp4">
     </video>
   </div>
 
@@ -317,7 +347,6 @@
   <script>
     // Configuração do Firebase
     const firebaseConfig = {
-      // Substitua com suas configurações do Firebase
       apiKey: "AIzaSyARaZW4VeK9hQIuKh_na731tqQWk314bK0",
       authDomain: "jogo-conotacao.firebaseapp.com",
       databaseURL: "https://jogo-conotacao-default-rtdb.firebaseio.com",
@@ -361,13 +390,13 @@
     let tempoInicio = null;
     let tempoTotal = 0;
     let timerInterval = null;
-    let usosHabilidade = 3; // Contador de usos da habilidade
+    let usosHabilidade = 5;
     let playerName = '';
-    let acertos = 0; // Contador de acertos
-    let errosConsecutivos = 0; // Contador de erros consecutivos
-    const CHANCE_BASE_JUMPSCARE = 0.01; // 1% de chance base
-    const AUMENTO_CHANCE_POR_ERRO = 0.05; // Aumenta 5% por erro
-    let jumpscareJaApareceu = false; // Flag para controlar se o jumpscare já apareceu
+    let acertos = 0;
+    let errosConsecutivos = 0;
+    const CHANCE_BASE_JUMPSCARE = 0.01;
+    const AUMENTO_CHANCE_POR_ERRO = 0.05;
+    let jumpscareJaApareceu = false;
     let jumpscareDesativado = false;
 
     // Array de perguntas
@@ -555,20 +584,16 @@
           data: new Date().toISOString()
         };
         
-        // Verifica se o jogador já existe no leaderboard
         const indexJogadorExistente = melhoresPontuacoes.findIndex(score => score.nome === playerName);
         
         if (indexJogadorExistente !== -1) {
-          // Se o jogador já existe, atualiza apenas se a nova pontuação for maior
           if (pontuacao > melhoresPontuacoes[indexJogadorExistente].pontuacao) {
             melhoresPontuacoes[indexJogadorExistente] = novaPontuacao;
           }
         } else {
-          // Se o jogador não existe, adiciona a nova pontuação
           melhoresPontuacoes.push(novaPontuacao);
         }
         
-        // Ordena por pontuação (maior primeiro) e tempo (menor primeiro)
         melhoresPontuacoes.sort((a, b) => {
           if (b.pontuacao !== a.pontuacao) {
             return b.pontuacao - a.pontuacao;
@@ -576,13 +601,10 @@
           return a.tempo - b.tempo;
         });
         
-        // Mantém apenas as 10 melhores pontuações
         melhoresPontuacoes = melhoresPontuacoes.slice(0, 10);
         
-        // Salva no Firebase
         await database.ref('leaderboard').set(melhoresPontuacoes);
         
-        // Atualiza a tabela
         atualizarTabelaLeaderboard();
       } catch (error) {
         console.error('Erro ao salvar pontuação:', error);
@@ -612,18 +634,15 @@
       
       tempoTotal = (Date.now() - tempoInicio) / 1000;
       
-      // Aplica a habilidade do Rafa (reduz o tempo em 20%)
       if (personagemEscolhido.nome === 'Reduzir Tempo') {
-        tempoTotal = tempoTotal * 0.8; // Reduz 20% do tempo
+        tempoTotal = tempoTotal * 0.8;
       }
       
       pontuacaoFinal.textContent = `${acertos}/25`;
       tempoTotalSpan.textContent = formatarTempo(tempoTotal);
       
-      // Salva a pontuação no Firebase
       salvarPontuacao(acertos, tempoTotal);
       
-      // Esconde o jogo e mostra o leaderboard
       game.classList.add('hidden');
       leaderboard.classList.remove('hidden');
       atualizarTabelaLeaderboard();
@@ -651,16 +670,13 @@
         ${personagemEscolhido.nome === 'Ver Dicas' ? `<div class="dica hidden">Dica: ${perguntaAtual.dica}</div>` : ''}
       `;
       
-      // Reset botões
       document.querySelectorAll('#botoes-respostas button').forEach(btn => {
         btn.disabled = false;
         btn.style.opacity = '1';
       });
 
-      // Reset habilidade
       habilidadeUsada = false;
       
-      // Mostra o botão de habilidade baseado no personagem
       if (personagemEscolhido.nome === 'Eliminar Alternativas' && podeUsarHabilidade()) {
         btnHabilidade.classList.remove('hidden');
         btnHabilidade.textContent = 'Usar Habilidade';
@@ -668,7 +684,7 @@
         btnHabilidade.classList.remove('hidden');
         btnHabilidade.textContent = 'Ativar Multiplicador';
       } else if (personagemEscolhido.nome === 'Segunda Chance' && podeUsarHabilidade()) {
-        btnHabilidade.classList.add('hidden'); // Começa escondido para a Segunda Chance
+        btnHabilidade.classList.add('hidden');
       } else if (personagemEscolhido.nome === 'Ver Dicas' && podeUsarHabilidade()) {
         btnHabilidade.classList.remove('hidden');
         btnHabilidade.textContent = 'Ver Dica';
@@ -719,16 +735,14 @@
 
     // Função para resetar o jogo
     function resetarJogo() {
-      // Reset das perguntas
       perguntas.forEach(p => p.usada = false);
       
-      // Reset da pontuação e habilidades
       pontuacao = 0;
       acertos = 0;
       multiplicadorAtivo = false;
-      usosHabilidade = 3;
+      usosHabilidade = 5;
       errosConsecutivos = 0;
-      jumpscareJaApareceu = false; // Reseta o flag do jumpscare
+      jumpscareJaApareceu = false;
       if (tempoHabilidade) {
         clearTimeout(tempoHabilidade);
       }
@@ -770,7 +784,6 @@
           btnHabilidade.classList.add('hidden');
           btnHabilidade.textContent = 'Multiplicador Ativo';
           
-          // Mostra mensagem de habilidade ativada
           const mensagemHabilidade = document.createElement('div');
           mensagemHabilidade.id = 'mensagem-habilidade';
           mensagemHabilidade.textContent = 'Multiplicador de Pontos Ativo!';
@@ -795,15 +808,13 @@
       }
     }
 
-    // Função para ativar a redução de tempo do Rafa
+    // Função para ativar a redução de tempo
     function ativarReducaoTempo() {
       if (personagemEscolhido.nome === 'Reduzir Tempo' && !habilidadeUsada && podeUsarHabilidade()) {
         if (usarHabilidade()) {
-          // Reduz exatamente 20 segundos do tempo atual
           const tempoAtual = (Date.now() - tempoInicio) / 1000;
           tempoInicio = Date.now() - ((tempoAtual - 20) * 1000);
           
-          // Mostra mensagem de habilidade ativada
           const mensagemHabilidade = document.createElement('div');
           mensagemHabilidade.id = 'mensagem-habilidade';
           mensagemHabilidade.textContent = 'Tempo Reduzido em 20 segundos!';
@@ -831,7 +842,6 @@
       somJumpscare.currentTime = 0;
       somJumpscare.play();
       
-      // Esconde o jumpscare após 15 segundos
       setTimeout(() => {
         overlay.classList.add('hidden');
         video.pause();
@@ -843,27 +853,21 @@
       const explicacao = perguntaDiv.querySelector('.explicacao');
       explicacao.classList.remove('hidden');
       
-      // Elementos de áudio
       const somCorreto = document.getElementById('som-correto');
       const somErro = document.getElementById('som-erro');
       
       if (resposta === perguntaAtual.resposta) {
-        // Toca som de acerto
         somCorreto.currentTime = 0;
         somCorreto.play();
         
-        // Reseta o contador de erros consecutivos
         errosConsecutivos = 0;
         
-        // Incrementa o contador de acertos
         acertos++;
         
-        // Aplica o multiplicador se estiver ativo
         const pontosGanhos = multiplicadorAtivo ? 2 : 1;
         pontuacao += pontosGanhos;
         pontuacaoDiv.textContent = `Pontuação: ${acertos}`;
         
-        // Mostra mensagem de pontos multiplicados
         if (multiplicadorAtivo) {
           const mensagemPontos = document.createElement('div');
           mensagemPontos.id = 'mensagem-pontos';
@@ -875,7 +879,6 @@
           }, 1500);
         }
         
-        // Adiciona mensagem de acerto na explicação
         explicacao.innerHTML = `<div style="color: #4CAF50; font-weight: bold; margin-bottom: 10px;">✓ Resposta Correta!</div>${perguntaAtual.explicacao}`;
         
         setTimeout(() => {
@@ -883,28 +886,22 @@
           mostrarNovaPergunta();
         }, 2500);
       } else {
-        // Toca som de erro
         somErro.currentTime = 0;
         somErro.play();
         
-        // Incrementa o contador de erros consecutivos
         errosConsecutivos++;
         
-        // Calcula a chance do jumpscare apenas se ainda não apareceu
         if (!jumpscareJaApareceu && !jumpscareDesativado) {
           const chanceJumpscare = CHANCE_BASE_JUMPSCARE + (errosConsecutivos * AUMENTO_CHANCE_POR_ERRO);
           
-          // Verifica se o jumpscare deve aparecer
           if (Math.random() < chanceJumpscare) {
             mostrarJumpscare();
-            jumpscareJaApareceu = true; // Marca que o jumpscare já apareceu
+            jumpscareJaApareceu = true;
           }
         }
         
-        // Adiciona mensagem de erro na explicação
         explicacao.innerHTML = `<div style="color: #f44336; font-weight: bold; margin-bottom: 10px;">✗ Resposta Incorreta!</div>${perguntaAtual.explicacao}`;
         
-        // Se for a Segunda Chance, mostra o botão de habilidade
         if (personagemEscolhido.nome === 'Segunda Chance' && !habilidadeUsada && podeUsarHabilidade()) {
           btnHabilidade.classList.remove('hidden');
           btnHabilidade.textContent = 'Tentar Novamente';
@@ -917,7 +914,7 @@
       }
     }
 
-    // Event listener para os botões de resposta
+    // Event listeners para os botões de resposta
     btnConotacao.onclick = () => verificarResposta('conotacao');
     btnDenotacao.onclick = () => verificarResposta('denotacao');
     btnMetafora.onclick = () => verificarResposta('metafora');
@@ -929,13 +926,11 @@
         eliminarAlternativas();
       } else if (personagemEscolhido.nome === 'Segunda Chance' && !habilidadeUsada && podeUsarHabilidade()) {
         if (usarHabilidade()) {
-          // Esconde a explicação e permite tentar novamente
           const explicacao = perguntaDiv.querySelector('.explicacao');
           explicacao.classList.add('hidden');
           btnHabilidade.classList.add('hidden');
           habilidadeUsada = true;
           
-          // Reativa os botões de resposta
           document.querySelectorAll('#botoes-respostas button').forEach(btn => {
             btn.disabled = false;
             btn.style.opacity = '1';
@@ -945,7 +940,6 @@
         ativarMultiplicador();
       } else if (personagemEscolhido.nome === 'Ver Dicas' && podeUsarHabilidade()) {
         if (usarHabilidade()) {
-          // Mostra a dica
           const dica = perguntaDiv.querySelector('.dica');
           dica.classList.remove('hidden');
           btnHabilidade.classList.add('hidden');
@@ -956,13 +950,12 @@
       }
     };
 
-    // Seleção de habilidade: balão sobreposto e continuar
+    // Seleção de habilidade
     document.querySelectorAll('.personagem-card').forEach(card => {
       const dialogo = card.querySelector('.habilidade-dialogo');
       const btnContinuar = card.querySelector('.btn-continuar');
 
       function abrirDialogo() {
-        // Fecha balões e botões de todos os outros personagens antes
         document.querySelectorAll('.personagem-card').forEach(outro => {
           if (outro !== card) {
             outro.classList.remove('selecionado');
@@ -975,7 +968,6 @@
         dialogo.style.opacity = 1;
         card.classList.add('selecionado');
         btnContinuar.classList.remove('hidden');
-        // Garante que está acima de todas as opções
         dialogo.style.zIndex = 30;
       }
 
@@ -999,26 +991,21 @@
       });
 
       btnContinuar.addEventListener('click', () => {
-        // Define a habilidade escolhida
         personagemEscolhido = {
           nome: card.dataset.nome,
           habilidade: card.dataset.habilidade,
           img: card.querySelector('img').src
         };
         
-        // Esconde a tela de habilidade e mostra o jogo
         personagem.classList.add('hidden');
         game.classList.remove('hidden');
         
-        // Inicializa o jogo
         mostrarPersonagemEscolhido();
         resetarJogo();
         tempoInicio = Date.now();
         
-        // Inicia o timer
         timerInterval = setInterval(atualizarTempoDecorrido, 100);
         
-        // Adiciona o contador de usos junto com o botão de habilidade
         const containerHabilidade = document.createElement('div');
         containerHabilidade.id = 'container-habilidade';
         
@@ -1030,10 +1017,8 @@
         containerHabilidade.appendChild(contadorUsos);
         game.appendChild(containerHabilidade);
         
-        // Mostra a primeira pergunta
         mostrarNovaPergunta();
         
-        // Limpa seleção visual para próxima vez
         document.querySelectorAll('.personagem-card').forEach(card => {
           card.classList.remove('selecionado');
           card.querySelector('.habilidade-dialogo').textContent = '';
@@ -1063,7 +1048,6 @@
     // Função para atualizar o texto do botão superior esquerdo
     function atualizarBotaoTopLeft() {
       if (!menu.classList.contains('hidden')) {
-        // Se estiver no menu principal, sempre mostra Leaderboard
         btnTopLeft.textContent = 'Leaderboard';
         btnTopLeft.onclick = () => {
           menu.classList.add('hidden');
@@ -1075,14 +1059,12 @@
           atualizarLeaderboard();
         };
       } else if (!personagem.classList.contains('hidden')) {
-        // Se estiver na seleção de habilidade, mostra Voltar ao Menu
         btnTopLeft.textContent = 'Voltar ao Menu';
         btnTopLeft.onclick = () => {
           personagem.classList.add('hidden');
           menu.classList.remove('hidden');
           game.classList.add('hidden');
           creditos.classList.add('hidden');
-          // reset seleção habilidade visual
           document.querySelectorAll('.personagem-card').forEach(card => {
             card.classList.remove('selecionado');
             card.querySelector('.habilidade-dialogo').textContent = '';
@@ -1092,7 +1074,6 @@
           mostrarCorredorEsconderSala();
         };
       } else {
-        // Em outras telas, mostra Leaderboard
         btnTopLeft.textContent = 'Leaderboard';
         btnTopLeft.onclick = () => {
           menu.classList.add('hidden');
@@ -1113,6 +1094,7 @@
       document.getElementById('bg-sala').classList.remove('visible');
       document.getElementById('bg-sala').classList.add('hidden');
     }
+
     // Função para mostrar sala e esconder corredor
     function mostrarSalaEsconderCorredor() {
       document.getElementById('bg-blur').classList.remove('visible');
@@ -1123,17 +1105,17 @@
 
     // Atualizar o botão quando mudar de tela
     btnJogar.onclick = () => {
-      // Solicita tela cheia
       if (document.documentElement.requestFullscreen) {
         document.documentElement.requestFullscreen();
-      } else if (document.documentElement.webkitRequestFullscreen) { // Safari
+      } else if (document.documentElement.webkitRequestFullscreen) {
         document.documentElement.webkitRequestFullscreen();
-      } else if (document.documentElement.msRequestFullscreen) { // IE11
+      } else if (document.documentElement.msRequestFullscreen) {
         document.documentElement.msRequestFullscreen();
       }
 
       menu.classList.add('hidden');
       document.getElementById('nome-input').classList.remove('hidden');
+      document.getElementById('bg-nome').style.display = 'block';
       personagem.classList.add('hidden');
       game.classList.add('hidden');
       creditos.classList.add('hidden');
@@ -1152,6 +1134,7 @@
       }
       
       document.getElementById('nome-input').classList.add('hidden');
+      document.getElementById('bg-nome').style.display = 'none';
       personagem.classList.remove('hidden');
       mostrarSalaEsconderCorredor();
       atualizarBotaoTopLeft();
@@ -1192,7 +1175,6 @@
       resetarJogo();
       document.getElementById('resultados').classList.add('hidden');
       personagem.classList.remove('hidden');
-      // Troca o fundo: esconde corredor, mostra sala
       document.getElementById('bg-blur').classList.remove('visible');
       document.getElementById('bg-blur').classList.add('hidden');
       document.getElementById('bg-sala').classList.remove('hidden');
@@ -1209,7 +1191,7 @@
     // Função para resetar o leaderboard
     async function resetarLeaderboard() {
       const senha = prompt('Digite a senha para resetar o leaderboard:');
-      if (senha === 'admin123') { // Senha padrão, você pode mudar
+      if (senha === 'admin123') {
         if (confirm('Tem certeza que deseja resetar o leaderboard? Esta ação não pode ser desfeita.')) {
           try {
             await database.ref('leaderboard').set([]);
@@ -1221,7 +1203,7 @@
             alert('Erro ao resetar leaderboard. Tente novamente.');
           }
         }
-      } else if (senha !== null) { // Se o usuário não cancelou o prompt
+      } else if (senha !== null) {
         alert('Senha incorreta!');
       }
     }
