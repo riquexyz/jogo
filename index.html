@@ -201,9 +201,102 @@
       z-index: 0;
       display: none;
     }
+
+    /* Estilos para o carrossel de imagens */
+    #image-carousel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .carousel-container {
+      position: relative;
+      width: 80%;
+      height: 80%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .carousel-image {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: none;
+    }
+
+    .carousel-image.active {
+      display: block;
+    }
+
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(76, 175, 80, 0.8);
+      color: white;
+      border: none;
+      padding: 15px;
+      cursor: pointer;
+      font-size: 24px;
+      border-radius: 50%;
+      transition: background-color 0.3s;
+    }
+
+    .carousel-arrow:hover {
+      background-color: rgba(76, 175, 80, 1);
+    }
+
+    .carousel-arrow.next {
+      right: 20px;
+    }
+
+    .carousel-start {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 5px;
+      display: none;
+    }
+
+    .carousel-start.visible {
+      display: block;
+    }
   </style>
 </head>
 <body>
+  <!-- Carrossel de imagens -->
+  <div id="image-carousel">
+    <div class="carousel-container">
+      <!-- explicação-->
+      <img src="https://i.imgur.com/clt340d.jpeg" alt="Imagem 1" class="carousel-image active">
+      <!-- conotação--> 
+      <img src="https://i.imgur.com/0Bo71Yh.jpeg" alt="Imagem 2" class="carousel-image">
+      <!-- denotação-->
+      <img src="https://i.imgur.com/i9lV6Xh.jpeg" alt="Imagem 3" class="carousel-image">
+      <!-- metafora-->
+      <img src="https://i.imgur.com/6cppA7n.jpeg" alt="Imagem 4" class="carousel-image">
+      <!-- hiperbole-->
+      <img src="https://i.imgur.com/7IayhrK.jpeg" alt="Imagem 5" class="carousel-image">
+      <button class="carousel-arrow next">❯</button>
+      <button class="carousel-start">Começar</button>
+    </div>
+  </div>
+
   <!-- Fundo de um corredor borrado -->
   <img id="bg-blur" class="visible" src="https://i.imgur.com/gp16uOZ.jpeg" alt="corredor" />
   <!-- Fundo da sala de aula para seleção de personagem -->
@@ -1114,13 +1207,9 @@
       }
 
       menu.classList.add('hidden');
-      document.getElementById('nome-input').classList.remove('hidden');
-      document.getElementById('bg-nome').style.display = 'block';
-      personagem.classList.add('hidden');
-      game.classList.add('hidden');
-      creditos.classList.add('hidden');
-      mostrarCorredorEsconderSala();
-      atualizarBotaoTopLeft();
+      carousel.style.display = 'flex';
+      currentImageIndex = 0;
+      showImage(currentImageIndex);
     };
 
     // Event listener para o botão de continuar após digitar o nome
@@ -1134,7 +1223,7 @@
       }
       
       document.getElementById('nome-input').classList.add('hidden');
-      document.getElementById('bg-nome').style.display = 'none';
+      document.getElementById('bg-nome').style.display = 'block';
       personagem.classList.remove('hidden');
       mostrarSalaEsconderCorredor();
       atualizarBotaoTopLeft();
@@ -1220,6 +1309,40 @@
         alert('Senha incorreta!');
       }
     };
+
+    // Código do carrossel
+    const carousel = document.getElementById('image-carousel');
+    const images = carousel.querySelectorAll('.carousel-image');
+    const nextButton = carousel.querySelector('.carousel-arrow.next');
+    const startButton = carousel.querySelector('.carousel-start');
+    let currentImageIndex = 0;
+
+    function showImage(index) {
+      images.forEach(img => img.classList.remove('active'));
+      images[index].classList.add('active');
+      
+      // Mostrar botão de começar apenas na última imagem
+      if (index === images.length - 1) {
+        startButton.classList.add('visible');
+        nextButton.style.display = 'none';
+      } else {
+        startButton.classList.remove('visible');
+        nextButton.style.display = 'block';
+      }
+    }
+
+    function nextImage() {
+      currentImageIndex = (currentImageIndex + 1) % images.length;
+      showImage(currentImageIndex);
+    }
+
+    nextButton.addEventListener('click', nextImage);
+
+    startButton.addEventListener('click', () => {
+      carousel.style.display = 'none';
+      document.getElementById('nome-input').classList.remove('hidden');
+      document.getElementById('bg-nome').style.display = 'block';
+    });
   </script>
 </body>
 </html>
