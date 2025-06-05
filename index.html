@@ -421,9 +421,10 @@
   </div>
 
   <!-- Áudios para feedback sonoro -->
-  <audio id="som-correto" src="https://www.dropbox.com/scl/fi/wnj3h0x1sld5jnk5g2j8y/duolingo-correct-1.mp3?rlkey=3rejj4g3kjcmg8yiv6gikjs6r&raw=1" preload="auto"></audio>
-  <audio id="som-erro" src="https://www.dropbox.com/scl/fi/6p13y67az9n3oldz5nq1b/duolingo-wrong-2.mp3?rlkey=iyie2i7681z6vq877ykhwjgkt&raw=1" preload="auto"></audio>
-  <audio id="som-jumpscare" src="https://www.dropbox.com/scl/fi/6p13y67az9n3oldz5nq1b/duolingo-wrong-2.mp3?rlkey=iyie2i7681z6vq877ykhwjgkt&raw=1" preload="auto"></audio>
+  <audio id="som-fundo" src="https://www.dropbox.com/scl/fi/1j5huhy8k6lydh68wswgc/be-more-serious-loop-251862.mp3?rlkey=ds2pmvr1vhbhyy04tw8r618sp&st=txr34zii&dl=0&raw=1" preload="none" loop></audio>
+  <audio id="som-correto" src="https://www.dropbox.com/scl/fi/wnj3h0x1sld5jnk5g2j8y/duolingo-correct-1.mp3?rlkey=3rejj4g3kjcmg8yiv6gikjs6r&raw=1" preload="none"></audio>
+  <audio id="som-erro" src="https://www.dropbox.com/scl/fi/6p13y67az9n3oldz5nq1b/duolingo-wrong-2.mp3?rlkey=iyie2i7681z6vq877ykhwjgkt&raw=1" preload="none"></audio>
+  <audio id="som-jumpscare" src="https://www.dropbox.com/scl/fi/6p13y67az9n3oldz5nq1b/duolingo-wrong-2.mp3?rlkey=iyie2i7681z6vq877ykhwjgkt&raw=1" preload="none"></audio>
 
   <!-- Jumpscare overlay -->
   <div id="jumpscare-overlay" class="hidden">
@@ -724,6 +725,10 @@
       const resultados = document.getElementById('resultados');
       const pontuacaoFinal = document.getElementById('pontuacao-final');
       const tempoTotalSpan = document.getElementById('tempo-total');
+      const somFundo = document.getElementById('som-fundo');
+      
+      // Pausar música de fundo
+      somFundo.pause();
       
       tempoTotal = (Date.now() - tempoInicio) / 1000;
       
@@ -928,16 +933,26 @@
       const overlay = document.getElementById('jumpscare-overlay');
       const video = document.getElementById('jumpscare-video');
       const somJumpscare = document.getElementById('som-jumpscare');
+      const somFundo = document.getElementById('som-fundo');
+      
+      // Pausar música de fundo
+      somFundo.pause();
       
       overlay.classList.remove('hidden');
       video.currentTime = 0;
-      video.play();
+      video.play().catch(error => console.log('Erro ao reproduzir vídeo:', error));
+      
+      // Carregar e tocar o som apenas quando necessário
+      somJumpscare.load();
       somJumpscare.currentTime = 0;
-      somJumpscare.play();
+      somJumpscare.play().catch(error => console.log('Erro ao reproduzir som:', error));
       
       setTimeout(() => {
         overlay.classList.add('hidden');
         video.pause();
+        somJumpscare.pause();
+        // Retomar música de fundo
+        somFundo.play().catch(error => console.log('Erro ao retomar música de fundo:', error));
       }, 2000);
     }
 
@@ -948,10 +963,12 @@
       
       const somCorreto = document.getElementById('som-correto');
       const somErro = document.getElementById('som-erro');
+      const somFundo = document.getElementById('som-fundo');
       
       if (resposta === perguntaAtual.resposta) {
+        somCorreto.load();
         somCorreto.currentTime = 0;
-        somCorreto.play();
+        somCorreto.play().catch(error => console.log('Erro ao reproduzir som:', error));
         
         errosConsecutivos = 0;
         
@@ -979,8 +996,9 @@
           mostrarNovaPergunta();
         }, 2500);
       } else {
+        somErro.load();
         somErro.currentTime = 0;
-        somErro.play();
+        somErro.play().catch(error => console.log('Erro ao reproduzir som:', error));
         
         errosConsecutivos++;
         
@@ -1205,6 +1223,11 @@
       } else if (document.documentElement.msRequestFullscreen) {
         document.documentElement.msRequestFullscreen();
       }
+
+      // Iniciar música de fundo
+      const somFundo = document.getElementById('som-fundo');
+      somFundo.load();
+      somFundo.play().catch(error => console.log('Erro ao iniciar música de fundo:', error));
 
       menu.classList.add('hidden');
       carousel.style.display = 'flex';
